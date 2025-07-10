@@ -17,7 +17,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
 
    ```bash
    git clone <repo-url/ssh>
-   HelloCityBackendService
+   cd HelloCityBackendService
    ```
 
 2. **Start the database:**
