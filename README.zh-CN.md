@@ -16,8 +16,8 @@
 1. **克隆项目并进入目录：**
 
    ```bash
-   git clone <your-repo-url>
-   cd hello-city-server
+   git clone <repo-url/ssh>
+   cd HelloCityBackendService
    ```
 
 2. **启动数据库：**
