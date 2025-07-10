@@ -27,7 +27,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    ```
 
    > The API service in compose.yaml is currently commented out, so only the database service will be started.
-   > If you want to start the API with Docker, uncomment the relevant lines in compose.yaml, refer to step 5, and restart compose.
+   > If you want to start the API with Docker, uncomment the relevant lines in compose.yaml, refer to step 6, and restart compose.
    > For development and debugging, it is recommended to use dotnet run to start the API directly.
 
 3. **Initialize the database table and insert test data:**
@@ -55,7 +55,13 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    > - Username: `root`
    > - Password: `root123`
 
-4. **Run the API (recommended for development/debugging):**
+4. **Restore dependencies:**
+
+   ```bash
+   dotnet restore
+   ```
+
+5. **Run the API (recommended for development/debugging):**
 
    ```bash
    cd HelloCity.Api
@@ -65,7 +71,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    - Default listening port: `http://localhost:5000`.
    - This is the recommended way for development/debugging (hot reload, friendly logs).
 
-5. **Run the API with Docker (optional):**
+6. **Run the API with Docker (optional):**
 
    - Since the API service is commented out in compose.yaml, uncomment the relevant lines if you want to use Docker.
    - When using Docker, host port `5050` maps to container port `8080`, i.e.:
@@ -80,7 +86,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
      });
      ```
 
-6. **Verify API and database connection:**
+7. **Verify API and database connection:**
 
    - If using dotnet run, visit [http://localhost:5000/api/TestUser](http://localhost:5000/api/TestUser)
    - If using Docker, visit [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)

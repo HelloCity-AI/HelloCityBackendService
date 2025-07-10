@@ -27,7 +27,7 @@
    ```
 
    > 目前 compose.yaml 文件中已注释掉 API 服务的 Docker 启动配置，仅会启动数据库服务。
-   > 如需用 Docker 启动 API，请取消 compose.yaml 中相关注释，参考步骤 5 后重新启动 compose。
+   > 如需用 Docker 启动 API，请取消 compose.yaml 中相关注释，参考步骤 6 后重新启动 compose。
    > 推荐开发调试时直接用 dotnet run 启动 API。
 
 3. **初始化数据库表和插入测试数据：**
@@ -55,7 +55,13 @@
    > - Username: `root`
    > - Password: `root123`
 
-4. **运行后端 API（推荐开发调试方式）：**
+4. **还原依赖包：**
+
+   ```bash
+   dotnet restore
+   ```
+
+5. **运行后端 API（推荐开发调试方式）：**
 
    ```bash
    cd HelloCity.Api
@@ -65,7 +71,7 @@
    - 默认监听端口为 `http://localhost:5000`。
    - 推荐开发调试时直接使用此方式，热重载、日志友好。
 
-5. **使用 Docker 部署 API（可选）：**
+6. **使用 Docker 部署 API（可选）：**
 
    - 由于 compose.yaml 默认注释了 API 服务，如需用 Docker 部署，请取消相关注释。
    - Docker 部署时，主机端口 `5050` 映射到容器 `8080`，即：
@@ -80,7 +86,7 @@
      });
      ```
 
-6. **验证接口与数据库连接：**
+7. **验证接口与数据库连接：**
 
    - 如果用 dotnet run，访问 [http://localhost:5000/api/TestUser](http://localhost:5000/api/TestUser)
    - 如果用 Docker，访问 [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)
