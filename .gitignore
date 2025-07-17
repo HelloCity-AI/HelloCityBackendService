@@ -1,5 +1,69 @@
+##############################
+# Build & Publish Artifacts #
+##############################
+
 bin/
 obj/
+out/
+*.user
+*.rsuser
+*.suo
+*.cache
+*.log
+**/coverage-report/
+#########################
+# Rider / ReSharper IDE #
+#########################
+
+.idea/
+*.sln.iml
+_ReSharper.Caches/
+*.DotSettings.user
+*.DotSettings
+
+###################
+# NuGet Packages  #
+###################
+
+# If you're restoring packages locally
 /packages/
-riderModule.iml
-/_ReSharper.Caches/
+
+########################
+# Test Output & Logs  #
+########################
+
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.log
+
+###############################
+# Code Coverage (e.g. Coverlet)
+###############################
+
+coverage/
+coverage*.json
+coverage*.xml
+coverage*.html
+lcov.info
+
+########################
+# OS / Editor Defaults #
+########################
+
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.bak
+*.tmp
+~$*
+
+#################
+# Other         #
+#################
+
+# Ignore secrets if used
+*.secret.json
+secrets.json
