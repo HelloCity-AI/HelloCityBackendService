@@ -92,7 +92,96 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    - If using Docker, visit [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)
    - You should see the test data you inserted.
 
----
+## How to run unit test
+
+This project integrates xUnit unit tests, with test code located in the `HelloCity.Tests` directory. You can run and view unit test results as follows:
+
+1. **Restore dependencies** (if not already done):
+
+   ```bash
+   dotnet restore
+   ```
+
+2. **Run all unit tests**:
+
+   ```bash
+   dotnet test
+   ```
+
+   You will see detailed output for passed/failed tests.
+
+3. **View test code example (A minimal test code was created already for learning purpose)**
+
+   For example, `UnitTest.cs` tests the `UnitTestService.SumInt` method:
+
+   ```csharp
+   [Theory]
+   [InlineData(1, 2, 3)]
+   [InlineData(-1, -2, -3)]
+   public void SumInt_ReturnsCorrectSum(int a, int b, int expected)
+   {
+       var unitTest = new UnitTestService();
+       var result = unitTest.SumInt(a, b);
+       Assert.Equal(expected, result);
+   }
+   ```
+
+   You can add more test cases in the `HelloCity.Tests` directory to cover your business logic.
+
+4. **Generate code coverage report (optional)**
+
+   If you want to check code coverage, run:
+
+   ```bash
+   dotnet test --collect:"XPlat Code Coverage"
+   ```
+
+   The coverage report will be generated under the `HelloCity.Tests/TestResults` directory.
+
+5. **Generate and view HTML coverage report (optional)**
+
+   (1) **Install report generator tool globally** (run once):
+
+   ```bash
+   dotnet tool install --global dotnet-reportgenerator-globaltool
+   ```
+
+   Make sure `$HOME/.dotnet/tools` is in your PATH (for macOS/Linux, add to your shell config):
+
+   ```bash
+   export PATH="$PATH:$HOME/.dotnet/tools"
+   ```
+
+   (2) **Generate HTML report**:
+
+   ```bash
+   reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:Html
+   ```
+
+   (3) **Open HTML report**:
+
+   - macOS: `open coverage-report/index.html`
+   - Windows: `start coverage-report/index.html`
+
+   **Common issue: `reportgenerator: command not found`**
+
+   **macOS / Linux:**  
+   Add to your shell config:
+
+   ```bash
+   export PATH="$PATH:$HOME/.dotnet/tools"
+   ```
+
+   Then restart your terminal or run `source ~/.zshrc`
+
+   **Windows (usually auto-configured):**  
+   If not recognized, make sure this path is included in your PATH environment variable:
+
+   ```
+   %USERPROFILE%\.dotnet\tools
+   ```
+
+For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 
 ## Tech Stack
 
@@ -101,6 +190,9 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Swagger](https://swagger.io/) (auto-generated API docs)
+- [xUnit](https://xunit.net/) (unit testing)
+- [coverlet](https://github.com/coverlet-coverage/coverlet) (code coverage)
+- [ReportGenerator](https://danielpalme.github.io/ReportGenerator/) (coverage HTML report)
 
 ## Project Structure
 
@@ -109,6 +201,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
 - `HelloCity.Services/`: Service implementations
 - `HelloCity.Models/`: Data models and config classes
 - `HelloCity.Middleware/`: Middleware extensions (if any)
+- `HelloCity.Tests/`: Unit tests and code coverage reports
 - `compose.yaml`: Docker Compose config (Postgres, etc.)
 - `hello-city-server.sln`: Solution file
 
