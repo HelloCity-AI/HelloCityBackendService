@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HelloCity.Models.Enums
 {
+
     /// <summary>
     /// Supported languages for user preference.
     /// - en: English (default)
@@ -21,7 +23,8 @@ namespace HelloCity.Models.Enums
     /// - pt: Portuguese
     /// - ar: Arabic
     /// </summary>
-    
+    /// 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PreferredLanguage
     {
         en,

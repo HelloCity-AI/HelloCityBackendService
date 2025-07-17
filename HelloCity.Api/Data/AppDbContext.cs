@@ -7,13 +7,13 @@ namespace HelloCity.Api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set;}
+        public DbSet<Users> Users { get; set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<Users>(entity =>
             {
                 entity
                     .HasKey(u => u.UserId);
@@ -70,10 +70,6 @@ namespace HelloCity.Api.Data
 
                 entity
                     .Property(u => u.UpdatedAt)
-                    .IsRequired();
-
-                entity
-                    .Property(u => u.IsDeleted)
                     .IsRequired();
             });
         }

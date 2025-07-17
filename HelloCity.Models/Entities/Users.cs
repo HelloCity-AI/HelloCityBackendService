@@ -4,9 +4,9 @@ using static System.Net.WebRequestMethods;
 
 namespace HelloCity.Models.Entities
 {
-    public class User
+    public class Users
     {
-        public Guid UserId { get; set; }
+        public Guid UserId { get; set; } = Guid.NewGuid();
 
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -16,9 +16,9 @@ namespace HelloCity.Models.Entities
         ///  URL of the user's avatar.
         ///  Currently， uses a placeholder. To be replaced with an S3-hosted image after AWS integration.
         /// </summary>
-        public string? Avatar { get; set; } = "https://via.placeholder.com/150";
+        public string Avatar { get; set; } = "https://via.placeholder.com/150";
 
-        public Gender? Gender { get; set; } = GenderEnum.PreferNotToSay;
+        public Gender Gender { get; set; } = GenderEnum.PreferNotToSay;
         public string? Nationality { get; set; }
         public string? City { get; set; }
         public string? University { get; set; }
@@ -27,7 +27,5 @@ namespace HelloCity.Models.Entities
         public DateTime LastJoinDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-        public bool IsDeleted { get; set; } = false;
     }
 }

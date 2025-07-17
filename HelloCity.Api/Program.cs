@@ -17,7 +17,7 @@ public class Program
         builder.Services.AddControllers();
         
         
-        
+
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development
         builder.Services.AddScoped<ITestUserService,TestUserService>();
