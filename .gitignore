@@ -1,9 +1,47 @@
+##############################
+# Build & Publish Artifacts #
+##############################
+
 bin/
 obj/
-/packages/
+out/
+*.user
+*.rsuser
+*.suo
+*.cache
+*.log
+**/coverage-report/
+
+#########################
+# Rider / ReSharper IDE #
+#########################
+
+.idea/
+*.sln.iml
+_ReSharper.Caches/
+*.DotSettings.user
+*.DotSettings
 riderModule.iml
 /_ReSharper.Caches/
 .vs/
-*.user
-*.suo
 *.vsidx
+
+###################
+# NuGet Packages  #
+###################
+
+# If you're restoring packages locally
+/packages/
+
+########################
+# Test Output & Logs  #
+########################
+
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.log
+
+###############################
+# Code Coverage
