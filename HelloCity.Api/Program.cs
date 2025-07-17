@@ -1,6 +1,8 @@
+using HelloCity.Api.Data;
 using HelloCity.IServices;
 using HelloCity.Models;
 using HelloCity.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace HelloCity.Api;
 
@@ -24,9 +26,13 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
-       
-        
+
+        // Add AppDbContext
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
