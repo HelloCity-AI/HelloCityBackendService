@@ -67,3 +67,27 @@ Thumbs.db
 # Ignore secrets if used
 *.secret.json
 secrets.json
+riderModule.iml
+/_ReSharper.Caches/
+.vs/
+*.vsidx
+
+###################
+# NuGet Packages  #
+###################
+
+# If you're restoring packages locally
+/packages/
+
+########################
+# Test Output & Logs  #
+########################
+
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.log
+
+###############################
+# Code Coverage
