@@ -1,6 +1,9 @@
+using AutoMapper;
 using HelloCity.Api.Data;
 using HelloCity.IServices;
 using HelloCity.Models;
+using HelloCity.Models.DTOs.Users;
+using HelloCity.Models.Entities;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +34,11 @@ public class Program
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+        //Add AutoMapper 
+        builder.Services.AddAutoMapper(cfg =>
+        {
+            cfg.CreateMap<Users, UserDto>();
+        });
 
         var app = builder.Build();
 
