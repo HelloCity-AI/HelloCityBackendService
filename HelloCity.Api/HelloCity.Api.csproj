@@ -28,6 +28,7 @@
       <ProjectReference Include="..\HelloCity.IRepository\HelloCity.IRepository.csproj" />
       <ProjectReference Include="..\HelloCity.Repository\HelloCity.Repository.csproj" />
       <ProjectReference Include="..\HelloCity.Services\HelloCity.Services.csproj" />
+      <ProjectReference Include="..\HelloCity.Models\HelloCity.Models.csproj" />
 	</ItemGroup>
 
 </Project>

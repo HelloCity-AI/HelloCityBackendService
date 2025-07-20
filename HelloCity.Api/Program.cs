@@ -4,9 +4,11 @@ using HelloCity.IServices;
 using HelloCity.Models;
 using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Entities;
+using HelloCity.Models.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HelloCity.Api;
 
@@ -40,10 +42,16 @@ public class Program
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         //Add AutoMapper 
-        builder.Services.AddAutoMapper(cfg =>
-        {
-            cfg.CreateMap<Users, UserDto>();
-        });
+        //builder.Services.AddAutoMapper(cfg =>
+        //{
+        //    cfg.CreateMap<Users, UserDto>();
+        //});
+        builder.Services.AddAutoMapper(
+            cfg => { },
+            typeof(UserProfile).Assembly
+        );
+
+
 
         var app = builder.Build();
 
