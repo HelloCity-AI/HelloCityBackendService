@@ -22,6 +22,11 @@ namespace HelloCity.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get user profile by user id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<UserDto?> GetUserProfileAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
