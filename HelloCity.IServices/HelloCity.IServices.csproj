@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\HelloCity.Models\HelloCity.Models.csproj" />
+    </ItemGroup>
+
 </Project>

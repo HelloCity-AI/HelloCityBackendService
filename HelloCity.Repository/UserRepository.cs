@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HelloCity.Api.Data;
 using HelloCity.IRepository;
+using HelloCity.Models;
 using HelloCity.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 

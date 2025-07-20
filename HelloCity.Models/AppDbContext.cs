@@ -1,7 +1,7 @@
 ﻿using HelloCity.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace HelloCity.Api.Data
+namespace HelloCity.Models
 {
     public class AppDbContext:DbContext
     {

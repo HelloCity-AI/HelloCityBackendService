@@ -1,5 +1,4 @@
 using AutoMapper;
-using HelloCity.Api.Data;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
@@ -46,7 +45,7 @@ public class Program
 
         //Register Repository and Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+        builder.Services.AddScoped<IUserService, UserService>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
