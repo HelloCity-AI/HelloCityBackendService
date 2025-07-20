@@ -1,9 +1,11 @@
 using AutoMapper;
 using HelloCity.Api.Data;
+using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
 using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Entities;
+using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +43,10 @@ public class Program
         });
 
         var app = builder.Build();
+
+        //Register Repository and Services
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
