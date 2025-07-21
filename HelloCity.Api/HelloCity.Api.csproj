@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="15.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +25,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\HelloCity.IRepository\HelloCity.IRepository.csproj" />
+      <ProjectReference Include="..\HelloCity.Repository\HelloCity.Repository.csproj" />
       <ProjectReference Include="..\HelloCity.Services\HelloCity.Services.csproj" />
-    </ItemGroup>
+      <ProjectReference Include="..\HelloCity.Models\HelloCity.Models.csproj" />
+	</ItemGroup>
 
 </Project>

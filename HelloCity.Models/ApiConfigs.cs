@@ -2,5 +2,5 @@ namespace HelloCity.Models;
 
 public class ApiConfigs
 {
-    public string DBConnection { get; set; }
+    public required string DBConnection { get; set; }
 }

@@ -1,8 +1,14 @@
-using HelloCity.Api.Data;
+using AutoMapper;
+using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
+using HelloCity.Models.DTOs.Users;
+using HelloCity.Models.Entities;
+using HelloCity.Models.Profiles;
+using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HelloCity.Api;
 
@@ -27,9 +33,23 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        //Register Repository and Services
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserService, UserService>();
+
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        //Add AutoMapper 
+        //builder.Services.AddAutoMapper(cfg =>
+        //{
+        //    cfg.CreateMap<Users, UserDto>();
+        //});
+        builder.Services.AddAutoMapper(
+            cfg => { },
+            typeof(UserProfile).Assembly
+        );
 
 
 
@@ -43,8 +63,6 @@ public class Program
         }
 
         app.UseAuthorization();
-
-
         app.MapControllers();
 
         app.Run();

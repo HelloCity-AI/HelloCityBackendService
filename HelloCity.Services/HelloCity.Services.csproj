@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\HelloCity.IServices\HelloCity.IServices.csproj" />
       <ProjectReference Include="..\HelloCity.Models\HelloCity.Models.csproj" />
+      <ProjectReference Include="..\HelloCity.IRepository\HelloCity.IRepository.csproj" />
     </ItemGroup>
 
     <ItemGroup>
