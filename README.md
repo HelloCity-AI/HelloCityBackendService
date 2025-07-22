@@ -234,14 +234,16 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 
 ## Project Structure
 
-- `HelloCity.Api/`: Web API entry, controllers, configs, startup files, etc.
-- `HelloCity.IServices/`: Interface definitions
-- `HelloCity.Services/`: Service implementations
-- `HelloCity.Models/`: Data models and config classes
-- `HelloCity.Middleware/`: Middleware extensions (if any)
-- `HelloCity.Tests/`: Unit tests and code coverage reports
+- `Api Layer`: Web API entry, controllers, configs, startup files, etc.
+- `Service Layer`: Contains business logic, uses repositories.
+- `Repository Layer`: Handles database operations via EF Core.
+- `Models/`: Defines entities, DTOs, and enums.
+- `Middleware/`: Handles cross-cutting concerns (authentication, error handling, CORS).
+- `Tests/`: Unit and integration tests.
 - `compose.yaml`: Docker Compose config (Postgres, etc.)
 - `hello-city-server.sln`: Solution file
+
+
 
 ## Notes
 
