@@ -9,6 +9,7 @@ namespace HelloCity.Tests.Helpers
         public UserTestProfile()
         {
             CreateMap<Users, UserDto>();
+            CreateMap<CreateUserDto, Users>();
         }
     }
 }
