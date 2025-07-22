@@ -30,6 +30,11 @@ namespace HelloCity.Repository
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
+        /// <summary>
+        /// Post user profile
+        /// </summary>
+        ///to be added
+        /// <returns></returns>
         public async Task<Users> AddUserAsync(Users user)
         {
             _context.Users.Add(user);

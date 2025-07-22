@@ -39,6 +39,11 @@ namespace HelloCity.Services
             return _mapper.Map<UserDto>(user);
         }
 
+        /// <summary>
+        /// Post user profile
+        /// </summary>
+        ///to be added
+        /// <returns></returns>
         public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
         {
             var user = _mapper.Map<Users>(dto);
