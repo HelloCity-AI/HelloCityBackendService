@@ -22,7 +22,7 @@ namespace HelloCity.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("HelloCity.Models.Entities.User", b =>
+            modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -46,9 +46,6 @@ namespace HelloCity.Api.Migrations
                     b.Property<string>("Gender")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastJoinDate")
                         .HasColumnType("timestamp with time zone");
