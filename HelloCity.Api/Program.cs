@@ -47,9 +47,17 @@ public class Program
             cfg => { },
             typeof(UserProfile).Assembly
         );
-        //builder.Services.AddAutoMapper(typeof(UserProfile));
-
-
+        
+        //cors policy
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
         var app = builder.Build();
 
@@ -59,7 +67,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        app.UseCors("AllowReactApp");
         app.UseAuthorization();
         app.MapControllers();
 
