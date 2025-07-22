@@ -31,13 +31,23 @@ namespace HelloCity.Services
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
 
             return _mapper.Map<UserDto>(user);
         }
-        
+
+        public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
+        {
+            var user = _mapper.Map<Users>(dto);
+            user.UserId = Guid.NewGuid();
+
+            await _userRepository.AddUserAsync(user);
+
+            return _mapper.Map<UserDto>(user);
+        }
+
     }
 }
