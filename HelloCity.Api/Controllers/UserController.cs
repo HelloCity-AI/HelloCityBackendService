@@ -39,7 +39,16 @@ namespace HelloCity.Api.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             var result = await _userService.CreateUserAsync(dto);
-            return Ok(new { message = "create user successfully", data = result });
+            return Ok(new
+            {
+                status = 200,
+                message = "create user successfully",
+                data = new
+                {
+                    username = dto.Username,
+                    email = dto.Email
+                }
+            });
         }
 
     }
