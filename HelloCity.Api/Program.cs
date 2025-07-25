@@ -9,6 +9,7 @@ using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace HelloCity.Api;
 
@@ -25,6 +26,12 @@ public class Program
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
+
+        // Configure Serilog
+        builder.Host.UseSerilog((contest, services, configuration) =>
+        {
+            configuration.ReadFrom.Configuration(contest.Configuration);
+        });
 
         // Add services to the container.
 
