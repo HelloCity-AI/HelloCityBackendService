@@ -1,0 +1,8 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=YourDbName;Username=YourUsername;Password=YourPassword"
+  },
+  "ApiConfigs": {
+    "DbConnection": "your-local-dev-value"
+  }
+}
