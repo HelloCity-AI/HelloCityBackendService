@@ -10,6 +10,8 @@ using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Events;
+using Serilog.Configuration;
 
 namespace HelloCity.Api;
 
@@ -28,9 +30,9 @@ public class Program
             .AddEnvironmentVariables();
 
         // Configure Serilog
-        builder.Host.UseSerilog((contest, services, configuration) =>
+        builder.Host.UseSerilog((context, services, configuration) =>
         {
-            configuration.ReadFrom.Configuration(contest.Configuration);
+            configuration.ReadFrom.Configuration(context.Configuration);
         });
 
         // Add services to the container.
@@ -66,7 +68,7 @@ public class Program
             typeof(UserProfile).Assembly
         );
 
-
+        
 
         var app = builder.Build();
 

@@ -92,3 +92,4 @@ TestResults/
 ###############################
 # Code Coverage
 HelloCity.Api/appsettings.Development.json
+HelloCity.Api/Logs/
