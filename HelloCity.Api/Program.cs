@@ -1,4 +1,5 @@
 using AutoMapper;
+using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
@@ -85,6 +86,8 @@ public class Program
             app.UseSwaggerUI();
         }
         app.UseCors("AllowReactApp");
+
+        app.UseMiddleware<GlobalExceptionMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
 
