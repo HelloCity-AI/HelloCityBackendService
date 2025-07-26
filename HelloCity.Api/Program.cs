@@ -38,14 +38,14 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        
-        
+
+
 
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development
-        builder.Services.AddScoped<ITestUserService,TestUserService>();
-        
-        
+        builder.Services.AddScoped<ITestUserService, TestUserService>();
+
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -56,19 +56,25 @@ public class Program
 
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+            b => b.MigrationsAssembly("HelloCity.Api")));
         //Add AutoMapper 
-        //builder.Services.AddAutoMapper(cfg =>
-        //{
-        //    cfg.CreateMap<Users, UserDto>();
-        //});
+
         builder.Services.AddAutoMapper(
             cfg => { },
             typeof(UserProfile).Assembly
         );
-
         
+        //cors policy
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
         var app = builder.Build();
 
@@ -78,7 +84,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        app.UseCors("AllowReactApp");
         app.UseAuthorization();
         app.MapControllers();
 

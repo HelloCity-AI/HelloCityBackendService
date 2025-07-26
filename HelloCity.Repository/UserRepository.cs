@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HelloCity.Repository
 {
-    public class UserRepository: IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
 
@@ -28,6 +28,18 @@ namespace HelloCity.Repository
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
+        /// <summary>
+        /// Post user profile
+        /// </summary>
+        ///to be added
+        /// <returns></returns>
+        public async Task<Users> AddUserAsync(Users user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
     }
 }

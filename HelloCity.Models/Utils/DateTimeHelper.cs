@@ -44,7 +44,10 @@ namespace HelloCity.Models.Utils
                 return utc;
             }
 
-            return TimeZoneInfo.ConvertTimeFromUtc(utc, sydneyTimeZone);
+            var sydneyTime = TimeZoneInfo.ConvertTimeFromUtc(utc, sydneyTimeZone);
+
+            // 👇 Force DateTimeKind.Utc (required for PostgreSQL timestamp with time zone)
+            return DateTime.SpecifyKind(sydneyTime, DateTimeKind.Utc);
         }
     }
 }

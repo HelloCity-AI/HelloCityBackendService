@@ -34,5 +34,31 @@ namespace HelloCity.Api.Controllers
 
             return Ok(userDto);
         }
+
+
+        /// <summary>
+        /// post user
+        /// Example: POST/api/user-profile/
+        /// </summary>
+        /// <param name="dto">User creation data</param>
+        /// <returns>Returns the created user's basic info</returns>
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        {
+            var result = await _userService.CreateUserAsync(dto);
+            return Ok(new
+            {
+                status = 200,
+                message = "create user successfully",
+                data = new
+                {
+                    userId = result.UserId,
+                    username = result.Username,
+                    email = result.Email
+                }
+            });
+        }
+
     }
 }

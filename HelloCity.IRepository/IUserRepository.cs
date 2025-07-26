@@ -12,5 +12,6 @@ namespace HelloCity.IRepository
     public interface IUserRepository
     {
         Task<Users?> GetUserByIdAsync(Guid userId);
+        Task<Users> AddUserAsync(Users user);
     }
 }
