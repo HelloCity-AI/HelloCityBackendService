@@ -183,6 +183,44 @@ This project integrates xUnit unit tests, with test code located in the `HelloCi
 
 For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 
+6. **API**
+   **GET/api/user-profile/{id}**
+   Response Example:
+      {
+         "userId": "e7f3127d-88ae-4d5e-b1a4-c13c99fb1234",
+         "username": "alice_dev",
+         "email": "alice@example.com",
+         "gender": "Female",
+         "city": "Sydney",
+         "preferredLanguage": "en",
+         "lastJoinDate": "2025-07-22T12:00:00Z"
+      }
+
+   **POST/api/user-profile**
+   Request Body:
+      {
+         "username": "john_dev",
+         "email": "john@example.com",
+         "password": "P@ssword123",
+         "gender": "Male",
+         "nationality": "Australia",
+         "city": "Sydney",
+         "preferredLanguage": "en",
+         "lastJoinDate": "2025-07-22T09:01:00.544Z"
+      }
+
+   Response Example:
+      {
+      "status": 200,
+      "message": "create user successfully",
+      "data": {
+         "userId": "12501b3e-a412-443b-9ce1-e21154aa7bf3",
+         "username": "diana_test",
+         "email": "diana@example.com"
+      }
+}
+   
+
 ## Tech Stack
 
 - [.NET 8](https://dotnet.microsoft.com/)
@@ -196,14 +234,16 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 
 ## Project Structure
 
-- `HelloCity.Api/`: Web API entry, controllers, configs, startup files, etc.
-- `HelloCity.IServices/`: Interface definitions
-- `HelloCity.Services/`: Service implementations
-- `HelloCity.Models/`: Data models and config classes
-- `HelloCity.Middleware/`: Middleware extensions (if any)
-- `HelloCity.Tests/`: Unit tests and code coverage reports
+- `Api Layer`: Web API entry, controllers, configs, startup files, etc.
+- `Service Layer`: Contains business logic, uses repositories.
+- `Repository Layer`: Handles database operations via EF Core.
+- `Models/`: Defines entities, DTOs, and enums.
+- `Middleware/`: Handles cross-cutting concerns (authentication, error handling, CORS).
+- `Tests/`: Unit and integration tests.
 - `compose.yaml`: Docker Compose config (Postgres, etc.)
 - `hello-city-server.sln`: Solution file
+
+
 
 ## Notes
 
