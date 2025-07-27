@@ -80,9 +80,11 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        app.UseCors("AllowReactApp");
 
         app.UseMiddleware<GlobalExceptionMiddleware>();
+
+        app.UseCors("AllowReactApp");
+
         app.UseAuthorization();
         app.MapControllers();
 
