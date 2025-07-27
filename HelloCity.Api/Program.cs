@@ -1,18 +1,13 @@
-using AutoMapper;
 using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
-using HelloCity.Models.DTOs.Users;
-using HelloCity.Models.Entities;
 using HelloCity.Models.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Events;
-using Serilog.Configuration;
+
 
 namespace HelloCity.Api;
 
