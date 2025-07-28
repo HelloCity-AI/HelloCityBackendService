@@ -26,11 +26,23 @@
    docker compose up
    ```
 
-   > 目前 compose.yaml 文件中已注释掉 API 服务的 Docker 启动配置，仅会启动数据库服务。
-   > 如需用 Docker 启动 API，请取消 compose.yaml 中相关注释，参考步骤 6 后重新启动 compose。
-   > 推荐开发调试时直接用 dotnet run 启动 API。
+> 目前 compose.yaml 文件中已注释掉 API 服务的 Docker 启动配置，仅会启动数据库服务。
+> 如需用 Docker 启动 API，请取消 compose.yaml 中相关注释，参考步骤 6 后重新启动 compose。
+> 推荐开发调试时直接用 dotnet run 启动 API。
 
-3. **初始化数据库表和插入测试数据：**
+3. **创建本地配置文件（首次使用时执行）：**
+
+   在首次运行项目之前，请先复制示例配置文件：
+
+   ```bash
+   cp HelloCity.Api/appsettings.Development.json.example HelloCity.Api/appsettings.Development.json
+   ```
+
+   然后根据你的本地数据库环境修改连接信息和相关配置。
+
+   ⚠️ appsettings.Development.json 已被 .gitignore 忽略，可做检查，切勿提交到 Git 仓库。
+
+4. **初始化数据库表和插入测试数据：**
 
    使用 DBeaver、Navicat 或其他数据库客户端，连接到 Postgres，选择 `HelloCityDb` 数据库，执行以下 SQL：
 
@@ -55,13 +67,13 @@
    > - Username: `root`
    > - Password: `root123`
 
-4. **还原依赖包：**
+5. **还原依赖包：**
 
    ```bash
    dotnet restore
    ```
 
-5. **运行后端 API（推荐开发调试方式）：**
+6. **运行后端 API（推荐开发调试方式）：**
 
    ```bash
    cd HelloCity.Api
@@ -71,7 +83,7 @@
    - 默认监听端口为 `http://localhost:5000`。
    - 推荐开发调试时直接使用此方式，热重载、日志友好。
 
-6. **使用 Docker 部署 API（可选）：**
+7. **使用 Docker 部署 API（可选）：**
 
    - 由于 compose.yaml 默认注释了 API 服务，如需用 Docker 部署，请取消相关注释。
    - Docker 部署时，主机端口 `5050` 映射到容器 `8080`，即：
@@ -86,7 +98,7 @@
      });
      ```
 
-7. **验证接口与数据库连接：**
+8. **验证接口与数据库连接：**
 
    - 如果用 dotnet run，访问 [http://localhost:5000/api/TestUser](http://localhost:5000/api/TestUser)
    - 如果用 Docker，访问 [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)

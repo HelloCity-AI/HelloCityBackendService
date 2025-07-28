@@ -29,7 +29,7 @@ namespace HelloCity.Api.Controllers
 
             if (userDto == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("User not found with given ID.");
             }
 
             return Ok(userDto);

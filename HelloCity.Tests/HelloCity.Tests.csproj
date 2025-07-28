@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HelloCity.Middleware\HelloCity.Middleware.csproj" />
       <ProjectReference Include="..\HelloCity.Services\HelloCity.Services.csproj" />
       <ProjectReference Include="..\HelloCity.Models\HelloCity.Models.csproj" />
       <ProjectReference Include="..\HelloCity.IRepository\HelloCity.IRepository.csproj" />
