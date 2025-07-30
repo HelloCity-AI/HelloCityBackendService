@@ -60,5 +60,22 @@ namespace HelloCity.Api.Controllers
             });
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser([FromBody] CreateUserDto dto, Guid id)
+        {
+            var result = await _userService.EditUserAsync(id, dto);
+            return Ok(new
+            {
+                status = 200,
+                message = "edit user successfully",
+                data = new
+                {
+                    userId = result.UserId,
+                    username = result.Username,
+                    email = result.Email
+                }
+            });
+        }
+
     }
 }
