@@ -231,6 +231,32 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
          "email": "diana@example.com"
       }
 }
+   **PUT/api/user-profile/{id}**
+   Request Body:
+      guid: ...
+      updated user info example:
+      {
+         "username": "john_dev",
+         "email": "john@example.com",
+         "password": "P@ssword123",
+         "gender": "Male",
+         "nationality": "Australia",
+         "city": "Sydney",
+         "preferredLanguage": "en",
+         "lastJoinDate": "2025-07-22T09:01:00.544Z"
+      }
+
+      Response Example:
+      {
+      "status": 200,
+      "message": "edit eate user successfully",
+      "data": {
+         "userId": same as guid in request body,
+         "username": "john_dev",
+         "email": "P@ssword123"
+      }
+      }
+
    
 
 ## Tech Stack
