@@ -11,5 +11,7 @@ namespace HelloCity.IServices
     {
         Task<UserDto?> GetUserProfileAsync(Guid userId);
         Task<UserDto> CreateUserAsync(CreateUserDto dto);
+
+        Task<UserDto> EditUserAsync(Guid id, CreateUserDto dto);
     }
 }
