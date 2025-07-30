@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HelloCity.IRepository;
 using HelloCity.Models;
+using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,13 @@ namespace HelloCity.Repository
         public async Task<Users> AddUserAsync(Users user)
         {
             _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<Users> UpdateUserAsync(Users user)
+        {
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return user;
         }
