@@ -37,7 +37,7 @@ public class CreateUserServiceTest
     {
         // Arrange
 
-        var dto = new CreateUserDto
+        var dto = new UserInfoCollectionDTO
         {
             Username = "john_dev",
             Email = "john@example.com",

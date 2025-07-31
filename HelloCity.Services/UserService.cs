@@ -44,7 +44,7 @@ namespace HelloCity.Services
         /// </summary>
         ///to be added
         /// <returns></returns>
-        public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
+        public async Task<UserDto> CreateUserAsync(UserInfoCollectionDTO dto)
         {
             var user = _mapper.Map<Users>(dto);
             user.UserId = Guid.NewGuid();
@@ -54,7 +54,7 @@ namespace HelloCity.Services
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> EditUserAsync(Guid id, CreateUserDto dto)
+        public async Task<UserDto> EditUserAsync(Guid id, UserInfoCollectionDTO dto)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
