@@ -2,7 +2,7 @@
 using HelloCity.Models.Entities;
 using HelloCity.Models.DTOs.Users;
 
-namespace HelloCity.Models.Profiles
+namespace HelloCity.Api.Profiles
 {
     public class UserProfile : Profile
     {

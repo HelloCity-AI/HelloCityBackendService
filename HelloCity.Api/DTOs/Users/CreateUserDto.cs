@@ -7,7 +7,7 @@ using HelloCity.Models.Enums;
 using HelloCity.Models.Utils;
 
 
-namespace HelloCity.Models.DTOs.Users
+namespace HelloCity.Api.DTOs.Users
 {
     public class CreateUserDto
     {
