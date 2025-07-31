@@ -22,7 +22,7 @@ public class CreateUserServiceTest
     }
 
     [Fact]
-    public async Task CreateUserAsync_ShouldReturnUserDto_WhenValidDtoProvided()
+    public async Task CreateUserAsync_ShouldReturnUserEntity_WhenUserIsCreatedSuccessfully()
     {
         // Arrange
 
