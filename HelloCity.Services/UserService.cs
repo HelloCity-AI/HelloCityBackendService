@@ -44,12 +44,24 @@ namespace HelloCity.Services
         /// </summary>
         ///to be added
         /// <returns></returns>
-        public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
+        public async Task<UserDto> CreateUserAsync(UserInfoCollectionDTO dto)
         {
             var user = _mapper.Map<Users>(dto);
             user.UserId = Guid.NewGuid();
 
             await _userRepository.AddUserAsync(user);
+
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<UserDto> EditUserAsync(Guid id, UserInfoCollectionDTO dto)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            // var user = _mapper.Map<Users>(dto);
+            _mapper.Map(dto, user);
+
+            await _userRepository.UpdateUserAsync(user);
 
             return _mapper.Map<UserDto>(user);
         }

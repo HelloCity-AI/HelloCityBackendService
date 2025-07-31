@@ -9,7 +9,7 @@ using HelloCity.Models.Utils;
 
 namespace HelloCity.Models.DTOs.Users
 {
-    public class CreateUserDto
+    public class UserInfoCollectionDTO
     {
         public required string Username { get; set; }
         public required string Email { get; set; }

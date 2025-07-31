@@ -10,6 +10,8 @@ namespace HelloCity.IServices
     public interface IUserService
     {
         Task<UserDto?> GetUserProfileAsync(Guid userId);
-        Task<UserDto> CreateUserAsync(CreateUserDto dto);
+        Task<UserDto> CreateUserAsync(UserInfoCollectionDTO dto);
+
+        Task<UserDto> EditUserAsync(Guid id, UserInfoCollectionDTO dto);
     }
 }

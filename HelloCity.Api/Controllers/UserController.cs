@@ -44,13 +44,28 @@ namespace HelloCity.Api.Controllers
         /// <returns>Returns the created user's basic info</returns>
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        public async Task<IActionResult> CreateUser([FromBody] UserInfoCollectionDTO dto)
         {
             var result = await _userService.CreateUserAsync(dto);
             return Ok(new
             {
-                status = 200,
                 message = "create user successfully",
+                data = new
+                {
+                    userId = result.UserId,
+                    username = result.Username,
+                    email = result.Email
+                }
+            });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser([FromBody] UserInfoCollectionDTO dto, Guid id)
+        {
+            var result = await _userService.EditUserAsync(id, dto);
+            return Ok(new
+            {
+                message = "edit user successfully",
                 data = new
                 {
                     userId = result.UserId,
