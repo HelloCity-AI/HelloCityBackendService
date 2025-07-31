@@ -1,5 +1,5 @@
 ﻿using HelloCity.IServices;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

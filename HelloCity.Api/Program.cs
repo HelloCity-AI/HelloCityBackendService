@@ -2,7 +2,7 @@ using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
-using HelloCity.Models.Profiles;
+using HelloCity.Api.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;

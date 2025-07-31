@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HelloCity.IServices;
 using HelloCity.IRepository;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 using HelloCity.Models.Entities;
 
 namespace HelloCity.Services

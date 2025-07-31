@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 
 namespace HelloCity.IServices
 {

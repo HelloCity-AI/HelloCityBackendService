@@ -5,7 +5,7 @@ using AutoMapper;
 using HelloCity.Services;
 using HelloCity.IRepository;
 using HelloCity.Models.Entities;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 using HelloCity.Models.Enums;
 using System;
 using System.Threading.Tasks;

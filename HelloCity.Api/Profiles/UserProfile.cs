@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HelloCity.Models.Entities;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 
 namespace HelloCity.Api.Profiles
 {
