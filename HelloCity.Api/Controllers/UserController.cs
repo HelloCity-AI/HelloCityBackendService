@@ -2,6 +2,8 @@
 using HelloCity.Api.DTOs.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using HelloCity.Models.Entities;
+using AutoMapper;
 
 namespace HelloCity.Api.Controllers
 {
@@ -10,10 +12,12 @@ namespace HelloCity.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -25,12 +29,14 @@ namespace HelloCity.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserProfile(Guid id)
         {
-            var userDto = await _userService.GetUserProfileAsync(id);
+            var user = await _userService.GetUserProfileAsync(id);
 
-            if (userDto == null)
+            if (user == null)
             {
                 throw new KeyNotFoundException("User not found with given ID.");
             }
+
+            var userDto = _mapper.Map<UserDto>(user);
 
             return Ok(userDto);
         }
@@ -46,16 +52,21 @@ namespace HelloCity.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
-            var result = await _userService.CreateUserAsync(dto);
+            var user = _mapper.Map<Users>(dto);
+
+            var result = await _userService.CreateUserAsync(user);
+
+            var userDto = _mapper.Map<UserDto>(result);
+
             return Ok(new
             {
                 status = 200,
                 message = "create user successfully",
                 data = new
                 {
-                    userId = result.UserId,
-                    username = result.Username,
-                    email = result.Email
+                    userId = userDto.UserId,
+                    username = userDto.Username,
+                    email = userDto.Email
                 }
             });
         }
