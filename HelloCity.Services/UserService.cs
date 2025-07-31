@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HelloCity.IServices;
 using HelloCity.IRepository;
-using HelloCity.Api.DTOs.Users;
 using HelloCity.Models.Entities;
 
 namespace HelloCity.Services
@@ -27,7 +26,7 @@ namespace HelloCity.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<UserDto?> GetUserProfileAsync(Guid userId)
+        public async Task<Users?> GetUserProfileAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
@@ -36,7 +35,7 @@ namespace HelloCity.Services
                 return null;
             }
 
-            return _mapper.Map<UserDto>(user);
+            return user;
         }
 
         /// <summary>
@@ -44,14 +43,13 @@ namespace HelloCity.Services
         /// </summary>
         ///to be added
         /// <returns></returns>
-        public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
+        public async Task<Users> CreateUserAsync(Users user)
         {
-            var user = _mapper.Map<Users>(dto);
             user.UserId = Guid.NewGuid();
 
             await _userRepository.AddUserAsync(user);
 
-            return _mapper.Map<UserDto>(user);
+            return user;
         }
 
     }
