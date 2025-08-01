@@ -71,17 +71,5 @@ namespace HelloCity.Services
             return existingUser;
         }
 
-        public async Task<UserDto> EditUserAsync(Guid id, UserInfoCollectionDTO dto)
-        {
-            var user = await _userRepository.GetUserByIdAsync(id);
-
-            // var user = _mapper.Map<Users>(dto);
-            _mapper.Map(dto, user);
-
-            await _userRepository.UpdateUserAsync(user);
-
-            return _mapper.Map<UserDto>(user);
-        }
-
     }
 }
