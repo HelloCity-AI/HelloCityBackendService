@@ -9,7 +9,7 @@ namespace HelloCity.Models.Profiles
         public UserProfile()
         {
             CreateMap<Users, UserDto>();
-            CreateMap<CreateUserDto, Users>();
+            CreateMap<UserInfoCollectionDTO, Users>();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace HelloCity.Tests.Services
         {
             // Arrange
             var guid = Guid.Parse("cb2b4fff-adc0-4515-aebb-1b46f19bf33e");
-            var dto = new CreateUserDto
+            var dto = new UserInfoCollectionDTO
             {
                 Username = "string222",
                 Email = "string222333@example.com",
