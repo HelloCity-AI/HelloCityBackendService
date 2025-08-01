@@ -35,7 +35,6 @@ public class CreateUserServiceTest
             Nationality = "Australia",
             City = "Sydney",
             PreferredLanguage = PreferredLanguage.en,
-            LastJoinDate = DateTime.UtcNow
         };
 
         // mock Repository
@@ -50,6 +49,7 @@ public class CreateUserServiceTest
         result.Username.Should().Be(user.Username);
         result.Email.Should().Be(user.Email);
         result.Gender.Should().Be(user.Gender);
+        result.LastJoinDate.Should().BeCloseTo(DateTime.UtcNow.AddHours(10), TimeSpan.FromSeconds(5));
         _userRepositoryMock.Verify(r => r.AddUserAsync(It.IsAny<Users>()), Times.Once);
     }
 }

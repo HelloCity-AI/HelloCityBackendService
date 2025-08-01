@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HelloCity.IServices;
 using HelloCity.IRepository;
 using HelloCity.Models.Entities;
+using HelloCity.Models.Utils;
 
 namespace HelloCity.Services
 {
@@ -40,13 +41,34 @@ namespace HelloCity.Services
         /// </summary>
         ///to be added
         /// <returns></returns>
+
         public async Task<Users> CreateUserAsync(Users user)
         {
             user.UserId = Guid.NewGuid();
+            user.LastJoinDate = DateTimeHelper.GetSydneyNow();
 
             await _userRepository.AddUserAsync(user);
 
             return user;
+        }
+
+        public async Task<Users> EditUserAsync(Guid id, Users updatedUser)
+        {
+            var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            existingUser.Username = updatedUser.Username;
+            existingUser.City = updatedUser.City;
+            existingUser.Nationality = updatedUser.Nationality;
+            existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateUserAsync(existingUser);
+
+            return existingUser;
         }
 
     }

@@ -10,6 +10,7 @@ namespace HelloCity.Api.Profiles
         {
             CreateMap<Users, UserDto>();
             CreateMap<CreateUserDto, Users>();
+            CreateMap<EditUserDto, Users>();
         }
     }
 }

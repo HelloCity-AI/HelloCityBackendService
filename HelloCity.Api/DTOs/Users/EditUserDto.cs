@@ -9,11 +9,10 @@ using HelloCity.Models.Utils;
 
 namespace HelloCity.Api.DTOs.Users
 {
-    public class CreateUserDto
+    public class EditUserDto
     {
         public required string Username { get; set; }
         public required string Email { get; set; }
-        public required string Password { get; set; }
         public Gender Gender { get; set; }
         public string? Nationality { get; set; }
         public string? City { get; set; }
