@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HelloCity.IRepository;
 using HelloCity.Models;
+using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 

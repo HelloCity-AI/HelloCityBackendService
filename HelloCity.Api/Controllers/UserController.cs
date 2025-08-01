@@ -56,7 +56,7 @@ namespace HelloCity.Api.Controllers
         /// <returns>Basic info of the created user</returns>
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        public async Task<IActionResult> CreateUser([FromBody] UserInfoCollectionDTO dto)
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
 
@@ -102,6 +102,22 @@ namespace HelloCity.Api.Controllers
                     userId = userDto.UserId,
                     username = userDto.Username,
                     email = userDto.Email
+                }
+            });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser([FromBody] UserInfoCollectionDTO dto, Guid id)
+        {
+            var result = await _userService.EditUserAsync(id, dto);
+            return Ok(new
+            {
+                message = "edit user successfully",
+                data = new
+                {
+                    userId = result.UserId,
+                    username = result.Username,
+                    email = result.Email
                 }
             });
         }

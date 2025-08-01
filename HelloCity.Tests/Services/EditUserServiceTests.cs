@@ -1,9 +1,11 @@
 using Xunit;
 using Moq;
 using FluentAssertions;
+using AutoMapper;
 using HelloCity.Services;
 using HelloCity.IRepository;
 using HelloCity.Models.Entities;
+using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Enums;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +17,7 @@ namespace HelloCity.Tests.Services
     public class EditUserServiceTests
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly IMapper _mapper;
         private readonly UserService _userService;
 
         public EditUserServiceTests()
@@ -38,6 +41,7 @@ namespace HelloCity.Tests.Services
                 Nationality = "Australia",
                 City = "Sydney",
                 PreferredLanguage = PreferredLanguage.en,
+                LastJoinDate = DateTime.UtcNow
             };
 
             var updatedUser = new Users
