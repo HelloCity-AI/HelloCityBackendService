@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace HelloCity.Api.Migrations
+namespace HelloCity.Models.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250722031612_SyncModelChanges")]
-    partial class SyncModelChanges
+    [Migration("20250731122529_InitClean")]
+    partial class InitClean
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

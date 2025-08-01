@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace HelloCity.Api.Migrations
+namespace HelloCity.Models.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -29,6 +29,7 @@ namespace HelloCity.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Avatar")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -44,6 +45,7 @@ namespace HelloCity.Api.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Gender")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 

@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using HelloCity.IRepository;
+﻿using HelloCity.IRepository;
 using HelloCity.Models.Entities;
 using HelloCity.Services;
 using HelloCity.Tests.Helpers;
-using Microsoft.Extensions.Logging;
 using Moq;
 using FluentAssertions;
 
@@ -13,20 +11,12 @@ namespace HelloCity.Tests.Services
     public class UserServiceTests
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
-        private readonly IMapper _mapper;
         private readonly UserService _userService;
 
         public UserServiceTests()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
-
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new UserTestProfile());
-            }, new LoggerFactory());
-
-            _mapper = config.CreateMapper();
-            _userService = new UserService(_userRepositoryMock.Object, _mapper);
+            _userService = new UserService(_userRepositoryMock.Object);
         }
 
         /// <summary>
@@ -34,7 +24,7 @@ namespace HelloCity.Tests.Services
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public async Task GetUserProfileAsync_ReturnMappedUserDto_WhenUserExists()
+        public async Task GetUserProfileAsync_ReturnUserEntity_WhenUserExists()
         {
             var userId = Guid.NewGuid();
 
@@ -45,7 +35,7 @@ namespace HelloCity.Tests.Services
                 .Setup(repo => repo.GetUserByIdAsync(userId))
                 .ReturnsAsync(testUser);
             
-            var result = await _userService.GetUserProfileAsync(testUser.UserId);
+            var result = await _userService.GetUserProfileAsync(userId);
 
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(testUser, options => options.ExcludingMissingMembers());

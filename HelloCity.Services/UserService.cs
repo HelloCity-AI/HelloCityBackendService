@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
 using HelloCity.IServices;
 using HelloCity.IRepository;
-using HelloCity.Models.DTOs.Users;
 using HelloCity.Models.Entities;
+using HelloCity.Models.Utils;
 
 namespace HelloCity.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -27,7 +24,7 @@ namespace HelloCity.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<UserDto?> GetUserProfileAsync(Guid userId)
+        public async Task<Users?> GetUserProfileAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
 
@@ -36,7 +33,7 @@ namespace HelloCity.Services
                 return null;
             }
 
-            return _mapper.Map<UserDto>(user);
+            return user;
         }
 
         /// <summary>
@@ -44,26 +41,34 @@ namespace HelloCity.Services
         /// </summary>
         ///to be added
         /// <returns></returns>
-        public async Task<UserDto> CreateUserAsync(UserInfoCollectionDTO dto)
+
+        public async Task<Users> CreateUserAsync(Users user)
         {
-            var user = _mapper.Map<Users>(dto);
             user.UserId = Guid.NewGuid();
+            user.LastJoinDate = DateTimeHelper.GetSydneyNow();
 
             await _userRepository.AddUserAsync(user);
 
-            return _mapper.Map<UserDto>(user);
+            return user;
         }
 
-        public async Task<UserDto> EditUserAsync(Guid id, UserInfoCollectionDTO dto)
+        public async Task<Users> EditUserAsync(Guid id, Users updatedUser)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);
+            var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null)
+            {
+                throw new Exception("User not found");
+            }
 
-            // var user = _mapper.Map<Users>(dto);
-            _mapper.Map(dto, user);
+            existingUser.Username = updatedUser.Username;
+            existingUser.City = updatedUser.City;
+            existingUser.Nationality = updatedUser.Nationality;
+            existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
+            existingUser.UpdatedAt = DateTime.UtcNow;
 
-            await _userRepository.UpdateUserAsync(user);
+            await _userRepository.UpdateUserAsync(existingUser);
 
-            return _mapper.Map<UserDto>(user);
+            return existingUser;
         }
 
     }
