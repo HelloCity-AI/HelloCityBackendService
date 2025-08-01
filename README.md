@@ -197,10 +197,60 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 
 6. **API**
    **GET/api/user-profile/{id}**
+   Response Example:
+   {
+   "userId": "e7f3127d-88ae-4d5e-b1a4-c13c99fb1234",
+   "username": "alice_dev",
+   "email": "alice@example.com",
+   "gender": "Female",
+   "city": "Sydney",
+   "preferredLanguage": "en",
+   "lastJoinDate": "2025-07-22T12:00:00Z"
+   }
    **POST/api/user-profile**
-   **PUT/api/user-profile/{id}**
+   Request Body:
+   {
+   "username": "john_dev",
+   "email": "john@example.com",
+   "password": "P@ssword123",
+   "gender": "Male",
+   "nationality": "Australia",
+   "city": "Sydney",
+   "preferredLanguage": "en"
+   }
 
-   
+   Response Example (201 Created):
+   {
+   "message": "create user successfully",
+   "data": {
+   "userId": "123e4567-e89b-12d3-a456-426614174000",
+   "username": "john_dev",
+   "email": "john@example.com"
+   }
+   }
+
+   **PUT/api/user-profile/{id}**
+   Request Body:
+
+   {
+   "username": "john_dev_updated",
+   "email": "john_updated@example.com",
+   "gender": "Male",
+   "nationality": "New Zealand",
+   "city": "Auckland",
+   "preferredLanguage": "en"
+   }
+
+   Response Example (200 OK):
+
+   {
+   "message": "edit user successfully",
+   "data": {
+   "userId": "123e4567-e89b-12d3-a456-426614174000",
+   "username": "john_dev_updated",
+   "email": "john_updated@example.com"
+   }
+   }
 
 ## Tech Stack
 
@@ -223,8 +273,6 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 - `Tests/`: Unit and integration tests.
 - `compose.yaml`: Docker Compose config (Postgres, etc.)
 - `hello-city-server.sln`: Solution file
-
-
 
 ## Notes
 
