@@ -2,7 +2,7 @@ using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
-using HelloCity.Models.Profiles;
+using HelloCity.Api.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +53,7 @@ public class Program
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-            b => b.MigrationsAssembly("HelloCity.Api")));
+            b => b.MigrationsAssembly("HelloCity.Models")));
         //Add AutoMapper 
 
         builder.Services.AddAutoMapper(

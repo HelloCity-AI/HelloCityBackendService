@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using HelloCity.Models.Entities;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 
-namespace HelloCity.Models.Profiles
+namespace HelloCity.Api.Profiles
 {
     public class UserProfile : Profile
     {
@@ -10,6 +10,7 @@ namespace HelloCity.Models.Profiles
         {
             CreateMap<Users, UserDto>();
             CreateMap<CreateUserDto, Users>();
+            CreateMap<EditUserDto, Users>();
         }
     }
 }

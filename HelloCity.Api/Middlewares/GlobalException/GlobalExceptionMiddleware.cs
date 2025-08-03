@@ -7,11 +7,14 @@ namespace HelloCity.Api.Middlewares.GlobalException
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<GlobalExceptionMiddleware> _logger;
+        private readonly IWebHostEnvironment _env;
 
-        public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
+
+        public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger, IWebHostEnvironment env)
         {
             _next = next;
             _logger = logger;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -36,7 +39,7 @@ namespace HelloCity.Api.Middlewares.GlobalException
                     status = statusCode,
                     message,
                     // Optionally include more details in development mode; Details should not be exposed in production
-                    detials = ex.Message
+                    details = _env.IsDevelopment() ? (ex.InnerException?.Message ?? ex.Message) : null
                 };
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
