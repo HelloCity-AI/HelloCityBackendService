@@ -138,6 +138,7 @@ namespace HelloCity.Models.Migrations
                 {
                     b.Navigation("ChecklistItems");
                 });
+
 #pragma warning restore 612, 618
         }
     }
