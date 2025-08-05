@@ -64,8 +64,9 @@ namespace HelloCity.Services
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
             existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
+            existingUser.Gender = updatedUser.Gender;
             existingUser.UpdatedAt = DateTime.UtcNow;
-
+            
             await _userRepository.UpdateUserAsync(existingUser);
 
             return existingUser;
