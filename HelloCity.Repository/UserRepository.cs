@@ -41,5 +41,12 @@ namespace HelloCity.Repository
             await _context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<Users> UpdateUserAsync(Users user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
     }
 }

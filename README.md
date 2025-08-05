@@ -30,7 +30,19 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    > If you want to start the API with Docker, uncomment the relevant lines in compose.yaml, refer to step 6, and restart compose.
    > For development and debugging, it is recommended to use dotnet run to start the API directly.
 
-3. **Initialize the database table and insert test data:**
+3. **Create local configuration file (one-time setup):**
+
+   Before running the project locally, copy the example config:
+
+   ```bash
+   cp HelloCity.Api/appsettings.Development.json.example HelloCity.Api/appsettings.Development.json
+   ```
+
+   Then update it with your own local database credentials and settings.
+
+   ⚠️ appsettings.Development.json is gitignored and should never be committed to the repository.
+
+4. **Initialize the database table and insert test data:**
 
    Use DBeaver, Navicat, or other database clients to connect to Postgres, select the `HelloCityDb` database, and execute the following SQL:
 
@@ -55,13 +67,13 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    > - Username: `root`
    > - Password: `root123`
 
-4. **Restore dependencies:**
+5. **Restore dependencies:**
 
    ```bash
    dotnet restore
    ```
 
-5. **Run the API (recommended for development/debugging):**
+6. **Run the API (recommended for development/debugging):**
 
    ```bash
    cd HelloCity.Api
@@ -71,7 +83,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
    - Default listening port: `http://localhost:5000`.
    - This is the recommended way for development/debugging (hot reload, friendly logs).
 
-6. **Run the API with Docker (optional):**
+7. **Run the API with Docker (optional):**
 
    - Since the API service is commented out in compose.yaml, uncomment the relevant lines if you want to use Docker.
    - When using Docker, host port `5050` maps to container port `8080`, i.e.:
@@ -86,7 +98,7 @@ A modern backend project based on .NET 8, ASP.NET Core, and a layered architectu
      });
      ```
 
-7. **Verify API and database connection:**
+8. **Verify API and database connection:**
 
    - If using dotnet run, visit [http://localhost:5000/api/TestUser](http://localhost:5000/api/TestUser)
    - If using Docker, visit [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)
@@ -186,40 +198,59 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 6. **API**
    **GET/api/user-profile/{id}**
    Response Example:
-      {
-         "userId": "e7f3127d-88ae-4d5e-b1a4-c13c99fb1234",
-         "username": "alice_dev",
-         "email": "alice@example.com",
-         "gender": "Female",
-         "city": "Sydney",
-         "preferredLanguage": "en",
-         "lastJoinDate": "2025-07-22T12:00:00Z"
-      }
-
+   {
+   "userId": "e7f3127d-88ae-4d5e-b1a4-c13c99fb1234",
+   "username": "alice_dev",
+   "email": "alice@example.com",
+   "gender": "Female",
+   "city": "Sydney",
+   "preferredLanguage": "en",
+   "lastJoinDate": "2025-07-22T12:00:00Z"
+   }
    **POST/api/user-profile**
    Request Body:
-      {
-         "username": "john_dev",
-         "email": "john@example.com",
-         "password": "P@ssword123",
-         "gender": "Male",
-         "nationality": "Australia",
-         "city": "Sydney",
-         "preferredLanguage": "en",
-         "lastJoinDate": "2025-07-22T09:01:00.544Z"
-      }
+   {
+   "username": "john_dev",
+   "email": "john@example.com",
+   "password": "P@ssword123",
+   "gender": "Male",
+   "nationality": "Australia",
+   "city": "Sydney",
+   "preferredLanguage": "en"
+   }
 
-   Response Example:
-      {
-      "status": 200,
-      "message": "create user successfully",
-      "data": {
-         "userId": "12501b3e-a412-443b-9ce1-e21154aa7bf3",
-         "username": "diana_test",
-         "email": "diana@example.com"
-      }
-}
-   
+   Response Example (201 Created):
+   {
+   "message": "create user successfully",
+   "data": {
+   "userId": "123e4567-e89b-12d3-a456-426614174000",
+   "username": "john_dev",
+   "email": "john@example.com"
+   }
+   }
+
+   **PUT/api/user-profile/{id}**
+   Request Body:
+
+   {
+   "username": "john_dev_updated",
+   "email": "john_updated@example.com",
+   "gender": "Male",
+   "nationality": "New Zealand",
+   "city": "Auckland",
+   "preferredLanguage": "en"
+   }
+
+   Response Example (200 OK):
+
+   {
+   "message": "edit user successfully",
+   "data": {
+   "userId": "123e4567-e89b-12d3-a456-426614174000",
+   "username": "john_dev_updated",
+   "email": "john_updated@example.com"
+   }
+   }
 
 ## Tech Stack
 
@@ -242,8 +273,6 @@ For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
 - `Tests/`: Unit and integration tests.
 - `compose.yaml`: Docker Compose config (Postgres, etc.)
 - `hello-city-server.sln`: Solution file
-
-
 
 ## Notes
 

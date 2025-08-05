@@ -1,16 +1,16 @@
-using AutoMapper;
+using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
-using HelloCity.Models.DTOs.Users;
-using HelloCity.Models.Entities;
-using HelloCity.Models.Profiles;
+using HelloCity.Api.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+
 
 namespace HelloCity.Api;
 
@@ -19,6 +19,20 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+
+        //Load environment-specific config
+        builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+
+        // Configure Serilog
+        builder.Host.UseSerilog((context, services, configuration) =>
+        {
+            configuration.ReadFrom.Configuration(context.Configuration);
+        });
 
         // Add services to the container.
 
@@ -72,7 +86,7 @@ public class Program
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-            b => b.MigrationsAssembly("HelloCity.Api")));
+            b => b.MigrationsAssembly("HelloCity.Models")));
         //Add AutoMapper 
 
         builder.Services.AddAutoMapper(
@@ -116,6 +130,9 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseMiddleware<GlobalExceptionMiddleware>();
+
         app.UseCors("AllowReactApp");
         app.UseAuthentication();
         app.UseAuthorization();

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HelloCity.Models.Enums;
 
-namespace HelloCity.Models.DTOs.Users
+namespace HelloCity.Api.DTOs.Users
 {
     public class UserDto
     {

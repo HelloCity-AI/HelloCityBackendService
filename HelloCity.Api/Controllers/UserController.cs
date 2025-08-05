@@ -1,7 +1,10 @@
 ﻿using HelloCity.IServices;
-using HelloCity.Models.DTOs.Users;
+using HelloCity.Api.DTOs.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using HelloCity.Models.Entities;
+using AutoMapper;
+using Microsoft.JSInterop.Infrastructure;
 
 namespace HelloCity.Api.Controllers
 {
@@ -10,52 +13,95 @@ namespace HelloCity.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger)
         {
             _userService = userService;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
-        /// get user profile by user Id
+        /// Get user profile by user ID
         /// Example: GET/api/user-profile/(UUID, e.g. 123e4567-e89b-12d3-a456-426614174000)
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">User ID (Guid)</param>
+        /// <returns>User profile info</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserProfile(Guid id)
         {
-            var userDto = await _userService.GetUserProfileAsync(id);
+            _logger.LogInformation("Getting user profile for ID: {UserId}", id);
 
-            if (userDto == null)
+            var user = await _userService.GetUserProfileAsync(id);
+
+            if (user == null)
             {
-                return NotFound();
+                _logger.LogWarning("User not found with ID: {UserId}", id);
+                throw new KeyNotFoundException("User not found with given ID.");
             }
+
+            var userDto = _mapper.Map<UserDto>(user);
 
             return Ok(userDto);
         }
 
 
         /// <summary>
-        /// post user
+        /// Create a new user
         /// Example: POST/api/user-profile/
         /// </summary>
         /// <param name="dto">User creation data</param>
-        /// <returns>Returns the created user's basic info</returns>
+        /// <returns>Basic info of the created user</returns>
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
-            var result = await _userService.CreateUserAsync(dto);
+            _logger.LogInformation("Creating user with email: {Email}", dto.Email);
+
+            var user = _mapper.Map<Users>(dto);
+            var result = await _userService.CreateUserAsync(user);
+            var userDto = _mapper.Map<UserDto>(result);
+
+            return CreatedAtAction(
+                nameof(GetUserProfile),
+                new { id = userDto.UserId }, 
+                new
+                {
+                    message = "create user successfully",
+                    data = new
+                    {
+                        userId = userDto.UserId,
+                        username = userDto.Username,
+                        email = userDto.Email
+                    }
+                });
+        }
+
+        /// <summary>
+        /// Edit an existing user
+        /// </summary>
+        /// <param name="dto">Fields to update</param>
+        /// <param name="id">User Id</param>
+        /// <returns>Updated user info</returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser([FromBody] EditUserDto dto, Guid id)
+        {
+            _logger.LogInformation("Editing user with ID: {UserId}", id);
+
+            var updatedUser = _mapper.Map<Users>(dto);
+            var result = await _userService.EditUserAsync(id, updatedUser);
+            var userDto = _mapper.Map<UserDto>(result);
+
             return Ok(new
             {
-                status = 200,
-                message = "create user successfully",
+                message = "edit user successfully",
                 data = new
                 {
-                    userId = result.UserId,
-                    username = result.Username,
-                    email = result.Email
+                    userId = userDto.UserId,
+                    username = userDto.Username,
+                    email = userDto.Email
                 }
             });
         }

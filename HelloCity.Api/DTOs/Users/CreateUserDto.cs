@@ -7,7 +7,7 @@ using HelloCity.Models.Enums;
 using HelloCity.Models.Utils;
 
 
-namespace HelloCity.Models.DTOs.Users
+namespace HelloCity.Api.DTOs.Users
 {
     public class CreateUserDto
     {
@@ -18,6 +18,5 @@ namespace HelloCity.Models.DTOs.Users
         public string? Nationality { get; set; }
         public string? City { get; set; }
         public PreferredLanguage PreferredLanguage { get; set; }
-        public DateTime LastJoinDate { get; set; } = DateTimeHelper.GetSydneyNow();
     }
 }
