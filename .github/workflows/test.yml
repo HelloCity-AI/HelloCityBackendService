@@ -1,6 +1,7 @@
-name: Pull Request Checks
+name: test
 
 on:
+  push:
   pull_request:
     branches: [ main ]
 
@@ -33,11 +34,11 @@ jobs:
     
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: hellocity_test
+          POSTGRES_PASSWORD: root123
+          POSTGRES_USER: root
+          POSTGRES_DB: HelloCityDb
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -61,22 +62,16 @@ jobs:
       run: dotnet build --no-restore --configuration Release
       
     - name: Run unit tests
-      run: |
-        dotnet test HelloCity.Tests/HelloCity.Tests.csproj \
-          --no-build \
-          --configuration Release \
-          --verbosity normal \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./coverage
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
       env:
-        ConnectionStrings__DefaultConnection: "Host=localhost;Database=hellocity_test;Username=postgres;Password=postgres"
-        ApiConfigs__DBConnection: "Host=localhost;Database=hellocity_test;Username=postgres;Password=postgres"
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
+        ApiConfigs__DBConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
         
     - name: Generate coverage report
       run: |
         dotnet tool install -g dotnet-reportgenerator-globaltool
         reportgenerator \
-          -reports:"coverage/**/coverage.cobertura.xml" \
+          -reports:"**/coverage.cobertura.xml" \
           -targetdir:"coveragereport" \
           -reporttypes:Html
           
@@ -85,6 +80,14 @@ jobs:
       with:
         name: coverage-report
         path: coveragereport/
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.cobertura.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
         
     - name: Comment coverage on PR
       uses: marocchino/sticky-pull-request-comment@v2
@@ -99,20 +102,22 @@ jobs:
           **Test Results Summary:**
           - ✅ Unit tests completed
           - 📈 Coverage report available in artifacts
+          - 🔗 Detailed coverage uploaded to Codecov
           
           Please review the coverage report to ensure adequate test coverage for your changes.
 
-  integration-tests:
+  api-verification:
     runs-on: ubuntu-latest
-    needs: unit-tests
+    needs: [code-quality, unit-tests]
+    if: github.event_name == 'pull_request'
     
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: hellocity_integration_test
+          POSTGRES_PASSWORD: root123
+          POSTGRES_USER: root
+          POSTGRES_DB: HelloCityDb
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -139,10 +144,10 @@ jobs:
       run: |
         dotnet ef database update --project HelloCity.Api/HelloCity.Api.csproj
       env:
-        ConnectionStrings__DefaultConnection: "Host=localhost;Database=hellocity_integration_test;Username=postgres;Password=postgres"
-        ApiConfigs__DBConnection: "Host=localhost;Database=hellocity_integration_test;Username=postgres;Password=postgres"
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
+        ApiConfigs__DBConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
         
-    - name: Run API tests
+    - name: Run API verification
       run: |
         # Start the API in background
         dotnet run --project HelloCity.Api/HelloCity.Api.csproj &
@@ -152,11 +157,13 @@ jobs:
         sleep 10
         
         # Test API endpoints
+        echo "Testing /api/TestUser endpoint..."
         curl -f http://localhost:5000/api/TestUser || exit 1
+        echo "✅ API verification passed"
         
         # Stop the API
         kill $API_PID
       env:
-        ConnectionStrings__DefaultConnection: "Host=localhost;Database=hellocity_integration_test;Username=postgres;Password=postgres"
-        ApiConfigs__DBConnection: "Host=localhost;Database=hellocity_integration_test;Username=postgres;Password=postgres"
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
+        ApiConfigs__DBConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
         ASPNETCORE_ENVIRONMENT: Development
