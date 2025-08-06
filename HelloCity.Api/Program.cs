@@ -35,8 +35,6 @@ public class Program
 
         builder.Services.AddControllers();
 
-
-
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development
         builder.Services.AddScoped<ITestUserService, TestUserService>();
@@ -49,6 +47,8 @@ public class Program
         //Register Repository and Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IChecklistItemRepository, checklistItemRepository>();
+        builder.Services.AddScoped<IChecklistItemService, ChecklistItemService>();
 
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
