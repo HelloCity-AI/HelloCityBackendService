@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using HelloCity.Models.Entities;
 using AutoMapper;
 using HelloCity.Api.DTOs.Users;
+using HelloCity.Api.DTOs.ChecklistItem;
+using System.Diagnostics;
 
 namespace HelloCity.Api.Controllers
 {
@@ -29,21 +31,18 @@ namespace HelloCity.Api.Controllers
       }
 
       [HttpPost("{id}")]
-      public async Task<ActionResult<UserDto>> CreateChecklistItem(Guid userId, ChecklistItem newChecklistItem)
+      public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid id, CreateChecklistItemDto newChecklistItemDto)
       {
-          _logger.LogInformation("Getting user profile for ID: {UserId}", userId);
-
-          var user = await _checklistItemService.AddChecklistItemAsync(userId, newChecklistItem);
-
-          if (user == null)
+          _logger.LogInformation("Creating checklist for User with ID: {id}", id);
+          var newChecklistItem = _mapper.Map<ChecklistItem>(newChecklistItemDto);
+          var savedChecklistItem = await _checklistItemService.AddChecklistItemAsync(id, newChecklistItem);
+          if (savedChecklistItem == null)
           {
-              _logger.LogWarning("User not found with ID: {UserId}", userId);
-              throw new KeyNotFoundException("User not found with given ID.");
+            _logger.LogWarning("Failed to create checklist item for User with ID: {id}", id);
+            return NotFound("User not found");
           }
-
-          //var userDto = _mapper.Map<UserDto>(user);
-
-          return Ok(newChecklistItem);
+          var checlistItemDto = _mapper.Map<ChecklistItemDto>(savedChecklistItem);
+          return Ok(checlistItemDto);
       }
   }
 
