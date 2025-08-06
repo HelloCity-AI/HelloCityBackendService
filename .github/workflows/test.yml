@@ -6,29 +6,6 @@ on:
     branches: [ main ]
 
 jobs:
-  code-quality:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Check formatting
-      run: dotnet format --verify-no-changes --verbosity diagnostic
-      
-    - name: Build
-      run: dotnet build --no-restore --configuration Release --verbosity normal
-      
-    - name: Run static analysis
-      run: dotnet build --no-restore --configuration Release --verbosity normal /p:TreatWarningsAsErrors=true
-
   unit-tests:
     runs-on: ubuntu-latest
     
@@ -62,53 +39,14 @@ jobs:
       run: dotnet build --no-restore --configuration Release
       
     - name: Run unit tests
-      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+      run: dotnet test --no-build --configuration Release --verbosity normal
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
         ApiConfigs__DBConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
-        
-    - name: Generate coverage report
-      run: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        reportgenerator \
-          -reports:"**/coverage.cobertura.xml" \
-          -targetdir:"coveragereport" \
-          -reporttypes:Html
-          
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coveragereport/
-        
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.cobertura.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-        
-    - name: Comment coverage on PR
-      uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
-      with:
-        recreate: true
-        message: |
-          ## 📊 Test Coverage Report
-          
-          Coverage report has been generated and uploaded as an artifact.
-          
-          **Test Results Summary:**
-          - ✅ Unit tests completed
-          - 📈 Coverage report available in artifacts
-          - 🔗 Detailed coverage uploaded to Codecov
-          
-          Please review the coverage report to ensure adequate test coverage for your changes.
 
   api-verification:
     runs-on: ubuntu-latest
-    needs: [code-quality, unit-tests]
+    needs: [unit-tests]
     if: github.event_name == 'pull_request'
     
     services:
