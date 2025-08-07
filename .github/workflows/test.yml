@@ -1,0 +1,45 @@
+name: test
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: root123
+          POSTGRES_USER: root
+          POSTGRES_DB: HelloCityDb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run unit tests
+      run: dotnet test --no-build --configuration Release --verbosity normal
+      env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
+          ApiConfigs__DBConnection: "Host=localhost;Database=HelloCityDb;Username=root;Password=root123"
