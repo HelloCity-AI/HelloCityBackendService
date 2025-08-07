@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HelloCity.Models.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250805045832_AddChecklistItemsRelationship")]
-    partial class AddChecklistItemsRelationship
+    [Migration("20250806132629_InitChecklistSchema")]
+    partial class InitChecklistSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,15 +35,18 @@ namespace HelloCity.Models.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Importance")
-                        .HasColumnType("integer");
+                    b.Property<string>("Importance")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<bool>("IsComplete")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("UserOwnerId")
                         .HasColumnType("uuid");
@@ -52,7 +55,7 @@ namespace HelloCity.Models.Migrations
 
                     b.HasIndex("UserOwnerId");
 
-                    b.ToTable("ChecklistItem");
+                    b.ToTable("ChecklistItems");
                 });
 
             modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>

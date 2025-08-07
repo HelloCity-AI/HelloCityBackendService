@@ -1,7 +1,10 @@
 using ImportanceEnum = HelloCity.Models.Enums.ImportanceLevel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HelloCity.Models.Entities
 {
+  [Table("ChecklistItems")]
   public class ChecklistItem
   {
     public Guid ChecklistItemId { get; set; } = Guid.NewGuid();
