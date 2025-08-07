@@ -21,7 +21,6 @@ namespace HelloCity.Services
       {
           throw new Exception("User not found");
       }
-      
       newChecklistItem.ChecklistItemId = Guid.NewGuid();
       newChecklistItem.UserOwnerId = userId;
       newChecklistItem.UserOwner = existingUser;

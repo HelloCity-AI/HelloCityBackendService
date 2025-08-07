@@ -30,20 +30,24 @@ namespace HelloCity.Api.Controllers
           _logger = logger;
       }
 
-      [HttpPost("{id}")]
-      public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid id, CreateChecklistItemDto newChecklistItemDto)
+    [HttpPost("{id}")]
+    public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid id, CreateChecklistItemDto newChecklistItemDto)
+    {
+      _logger.LogInformation("Creating checklist for User with ID: {id}", id);
+
+      try
       {
-          _logger.LogInformation("Creating checklist for User with ID: {id}", id);
-          var newChecklistItem = _mapper.Map<ChecklistItem>(newChecklistItemDto);
-          var savedChecklistItem = await _checklistItemService.AddChecklistItemAsync(id, newChecklistItem);
-          if (savedChecklistItem == null)
-          {
-            _logger.LogWarning("Failed to create checklist item for User with ID: {id}", id);
-            return NotFound("User not found");
-          }
-          var checlistItemDto = _mapper.Map<ChecklistItemDto>(savedChecklistItem);
-          return Ok(checlistItemDto);
+        var newChecklistItem = _mapper.Map<ChecklistItem>(newChecklistItemDto);
+        var savedChecklistItem = await _checklistItemService.AddChecklistItemAsync(id, newChecklistItem);
+        var checklistItemDto = _mapper.Map<ChecklistItemDto>(savedChecklistItem);
+        return Created("/api/checklist-item/" + checklistItemDto.ChecklistItemId, checklistItemDto);
       }
+      catch (Exception ex)
+      {
+        _logger.LogWarning(ex, "Failed to create checklist item for User with ID: {id}", id);
+        return NotFound("User not found");
+      }
+    }
   }
 
 }
