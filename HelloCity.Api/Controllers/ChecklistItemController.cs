@@ -14,18 +14,15 @@ namespace HelloCity.Api.Controllers
   public class ChecklistItemController : ControllerBase
   {
       private readonly IChecklistItemService _checklistItemService;
-      private readonly IUserService _userService;
       private readonly IMapper _mapper;
       private readonly ILogger<ChecklistItemController> _logger;
 
       public ChecklistItemController(
-          IChecklistItemService checklistItemService,
-          IUserService userService, 
+          IChecklistItemService checklistItemService, 
           IMapper mapper,
           ILogger<ChecklistItemController> logger)
       {
           _checklistItemService = checklistItemService;
-          _userService = userService; 
           _mapper = mapper;
           _logger = logger;
       }
@@ -49,5 +46,4 @@ namespace HelloCity.Api.Controllers
       }
     }
   }
-
 }
