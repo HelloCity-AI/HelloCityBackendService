@@ -125,22 +125,6 @@ namespace HelloCity.Models.Migrations
 
                     b.ToTable("Users");
                 });
-
-            modelBuilder.Entity("HelloCity.Models.Entities.ChecklistItem", b =>
-                {
-                    b.HasOne("HelloCity.Models.Entities.Users", "UserOwner")
-                        .WithMany("ChecklistItems")
-                        .HasForeignKey("UserOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserOwner");
-                });
-
-            modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
-                {
-                    b.Navigation("ChecklistItems");
-                });
 #pragma warning restore 612, 618
         }
     }
