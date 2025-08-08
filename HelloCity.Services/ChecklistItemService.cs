@@ -19,10 +19,10 @@ namespace HelloCity.Services
       var existingUser = await _userRepository.GetUserByIdAsync(userId);
       if (existingUser == null)
       {
-          throw new Exception("User not found");
+        throw new KeyNotFoundException($"User with ID {userId} not found.");
       }
       newChecklistItem.ChecklistItemId = Guid.NewGuid();
-      newChecklistItem.UserOwnerId = userId;
+      newChecklistItem.OwnerId = userId;
       newChecklistItem.UserOwner = existingUser;
       existingUser.ChecklistItems.Add(newChecklistItem);
       await _checklistItemRepository.AddChecklistItemAsync(userId, newChecklistItem);

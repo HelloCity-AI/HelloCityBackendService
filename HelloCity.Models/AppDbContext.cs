@@ -101,13 +101,13 @@ namespace HelloCity.Models
                     .IsRequired();
 
                 entity
-                    .Property(c => c.UserOwnerId)
+                    .Property(c => c.OwnerId)
                     .IsRequired();
 
                 entity
                     .HasOne(c => c.UserOwner)
                     .WithMany(u => u.ChecklistItems)
-                    .HasForeignKey(c => c.UserOwnerId)
+                    .HasForeignKey(c => c.OwnerId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
