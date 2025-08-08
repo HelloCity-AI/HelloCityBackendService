@@ -1,4 +1,5 @@
 using HelloCity.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelloCity.Api.Controllers;
@@ -13,7 +14,8 @@ public class TestUserController: ControllerBase
     {
         _testUserService = testUserService;
     }
-    
+
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> TestAsync()
     {
