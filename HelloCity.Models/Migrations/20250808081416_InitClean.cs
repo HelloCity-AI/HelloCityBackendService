@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HelloCity.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class InitChecklistSchema : Migration
+    public partial class InitClean : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,7 +40,7 @@ namespace HelloCity.Models.Migrations
                 columns: table => new
                 {
                     ChecklistItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserOwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     IsComplete = table.Column<bool>(type: "boolean", nullable: false),
@@ -50,17 +50,17 @@ namespace HelloCity.Models.Migrations
                 {
                     table.PrimaryKey("PK_ChecklistItems", x => x.ChecklistItemId);
                     table.ForeignKey(
-                        name: "FK_ChecklistItems_Users_UserOwnerId",
-                        column: x => x.UserOwnerId,
+                        name: "FK_ChecklistItems_Users_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChecklistItems_UserOwnerId",
+                name: "IX_ChecklistItems_OwnerId",
                 table: "ChecklistItems",
-                column: "UserOwnerId");
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",

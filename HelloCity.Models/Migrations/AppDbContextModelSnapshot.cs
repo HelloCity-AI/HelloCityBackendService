@@ -40,17 +40,17 @@ namespace HelloCity.Models.Migrations
                     b.Property<bool>("IsComplete")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid>("UserOwnerId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("ChecklistItemId");
 
-                    b.HasIndex("UserOwnerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("ChecklistItems");
                 });
@@ -124,6 +124,22 @@ namespace HelloCity.Models.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("HelloCity.Models.Entities.ChecklistItem", b =>
+                {
+                    b.HasOne("HelloCity.Models.Entities.Users", "UserOwner")
+                        .WithMany("ChecklistItems")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserOwner");
+                });
+
+            modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
+                {
+                    b.Navigation("ChecklistItems");
                 });
 #pragma warning restore 612, 618
         }
