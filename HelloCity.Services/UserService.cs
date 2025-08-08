@@ -59,15 +59,14 @@ namespace HelloCity.Services
             {
                 throw new Exception("User not found");
             }
-
             existingUser.Username = updatedUser.Username;
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
             existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
+            existingUser.Gender = updatedUser.Gender;
             existingUser.UpdatedAt = DateTime.UtcNow;
 
             await _userRepository.UpdateUserAsync(existingUser);
-
             return existingUser;
         }
 
