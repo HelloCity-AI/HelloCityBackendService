@@ -35,10 +35,10 @@ namespace HelloCity.Tests.Services
         Importance = ImportanceLevel.Medium,
         IsComplete = false,
         OwnerId = userId,
-        UserOwner = default! // required to suppress compiler error
+        UserOwner = default!
       };
 
-      // Mock: simulate user not found
+      // Mock user not found
       _userRepositoryMock.Setup(r => r.GetUserByIdAsync(userId))
           .ReturnsAsync((Users?)null);
 
@@ -46,10 +46,7 @@ namespace HelloCity.Tests.Services
       var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
           _checklistItemService.AddChecklistItemAsync(userId, newChecklistItem));
 
-      // Optional: assert on the exception message
       exception.Message.Should().Be($"User with ID {userId} not found.");
-
-      // Verify the method was called once
       _userRepositoryMock.Verify(r => r.GetUserByIdAsync(userId), Times.Once);
     }
 
@@ -136,7 +133,7 @@ namespace HelloCity.Tests.Services
         OwnerId = userId,
         UserOwner = user
       };
-      
+
       // Mock repository to return the user
       _userRepositoryMock.Setup(r => r.GetUserByIdAsync(userId))
           .ReturnsAsync(user);
