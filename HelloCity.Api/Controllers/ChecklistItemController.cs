@@ -12,19 +12,19 @@ namespace HelloCity.Api.Controllers
   [ApiController]
   public class ChecklistItemController : ControllerBase
   {
-      private readonly IChecklistItemService _checklistItemService;
-      private readonly IMapper _mapper;
-      private readonly ILogger<ChecklistItemController> _logger;
+    private readonly IChecklistItemService _checklistItemService;
+    private readonly IMapper _mapper;
+    private readonly ILogger<ChecklistItemController> _logger;
 
-      public ChecklistItemController(
-        IChecklistItemService checklistItemService, 
-        IMapper mapper,
-        ILogger<ChecklistItemController> logger)
-      {
-        _checklistItemService = checklistItemService;
-        _mapper = mapper;
-        _logger = logger;
-      }
+    public ChecklistItemController(
+      IChecklistItemService checklistItemService,
+      IMapper mapper,
+      ILogger<ChecklistItemController> logger)
+    {
+      _checklistItemService = checklistItemService;
+      _mapper = mapper;
+      _logger = logger;
+    }
 
     [HttpPost]
     public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid userId, CreateChecklistItemDto newChecklistItemDto)
@@ -46,6 +46,29 @@ namespace HelloCity.Api.Controllers
       {
         _logger.LogError(ex, "Unexpected error while creating checklist item for User with ID: {userId}", userId);
         return Problem("An unexpected error occurred.");
+      }
+    }
+    [HttpGet]
+    public async Task<ActionResult<List<ChecklistItem>>> GetChecklistItems(Guid userId)
+    {
+      _logger.LogInformation("Getting checklist for User with ID: {userId}", userId);
+      try
+      {
+        var userChecklistItems = await _checklistItemService.GetChecklistItemsAsync(userId);
+        var checklistItemDtos = userChecklistItems.Select(item => new ChecklistItemDto
+        {
+          ChecklistItemId = item.ChecklistItemId,
+          Title = item.Title,
+          Description = item.Description,
+          IsComplete = item.IsComplete,
+          Importance = item.Importance
+        }).ToList();
+        return Ok(checklistItemDtos);
+      }
+      catch (KeyNotFoundException ex)
+      {
+        _logger.LogWarning(ex, "User not found with ID: {userId}", userId);
+        return NotFound("User not found");
       }
     }
   }
