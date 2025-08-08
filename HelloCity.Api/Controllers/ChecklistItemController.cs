@@ -58,6 +58,7 @@ namespace HelloCity.Api.Controllers
         var checklistItemDtos = userChecklistItems.Select(item => new ChecklistItemDto
         {
           ChecklistItemId = item.ChecklistItemId,
+          OwnerId = item.OwnerId,
           Title = item.Title,
           Description = item.Description,
           IsComplete = item.IsComplete,
