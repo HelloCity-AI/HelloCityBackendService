@@ -45,7 +45,7 @@ namespace HelloCity.Api.Controllers
       catch (Exception ex)
       {
         _logger.LogError(ex, "Unexpected error while creating checklist item for User with ID: {userId}", userId);
-        return StatusCode(500, "An unexpected error occurred.");
+        return Problem("An unexpected error occurred.");
       }
     }
   }

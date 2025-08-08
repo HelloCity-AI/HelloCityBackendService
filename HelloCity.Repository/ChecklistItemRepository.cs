@@ -1,14 +1,12 @@
-
-
 using HelloCity.IRepository;
 using HelloCity.Models;
 using HelloCity.Models.Entities;
 
 namespace HelloCity.Repository{
-  public class checklistItemRepository : IChecklistItemRepository
+  public class ChecklistItemRepository : IChecklistItemRepository
   {
     private readonly AppDbContext _context;
-    public checklistItemRepository(AppDbContext context)
+    public ChecklistItemRepository(AppDbContext context)
     {
       _context = context;
     }

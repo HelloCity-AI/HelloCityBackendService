@@ -1,4 +1,3 @@
-
 using HelloCity.Models.Entities;
 
 namespace HelloCity.IRepository {

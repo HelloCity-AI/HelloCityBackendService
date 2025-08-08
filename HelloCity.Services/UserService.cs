@@ -55,6 +55,7 @@ namespace HelloCity.Services
         public async Task<Users> EditUserAsync(Guid id, Users updatedUser)
         {
             var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null) throw new Exception("User not found");
             existingUser.Username = updatedUser.Username;
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
