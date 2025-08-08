@@ -22,6 +22,39 @@ namespace HelloCity.Models.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("HelloCity.Models.Entities.ChecklistItem", b =>
+                {
+                    b.Property<Guid>("ChecklistItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Importance")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("ChecklistItemId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("ChecklistItems");
+                });
+
             modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -91,6 +124,22 @@ namespace HelloCity.Models.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("HelloCity.Models.Entities.ChecklistItem", b =>
+                {
+                    b.HasOne("HelloCity.Models.Entities.Users", "UserOwner")
+                        .WithMany("ChecklistItems")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserOwner");
+                });
+
+            modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
+                {
+                    b.Navigation("ChecklistItems");
                 });
 #pragma warning restore 612, 618
         }

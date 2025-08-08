@@ -35,6 +35,33 @@ namespace HelloCity.Models.Migrations
                     table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ChecklistItems",
+                columns: table => new
+                {
+                    ChecklistItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    IsComplete = table.Column<bool>(type: "boolean", nullable: false),
+                    Importance = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChecklistItems", x => x.ChecklistItemId);
+                    table.ForeignKey(
+                        name: "FK_ChecklistItems_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChecklistItems_OwnerId",
+                table: "ChecklistItems",
+                column: "OwnerId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
@@ -51,6 +78,9 @@ namespace HelloCity.Models.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ChecklistItems");
+
             migrationBuilder.DropTable(
                 name: "Users");
         }
