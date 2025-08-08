@@ -9,6 +9,8 @@ namespace HelloCity.Models
 
         public DbSet<Users> Users { get; set;}
 
+        public DbSet<ChecklistItem> ChecklistItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -71,6 +73,42 @@ namespace HelloCity.Models
                 entity
                     .Property(u => u.UpdatedAt)
                     .IsRequired();
+            });
+
+            modelBuilder.Entity<ChecklistItem>(entity =>
+            {
+                entity
+                    .HasKey(c => c.ChecklistItemId);
+
+                entity
+                    .Property(c => c.Title)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity
+                    .Property(c => c.Description)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity
+                    .Property(c => c.IsComplete)
+                    .IsRequired();
+
+                entity
+                    .Property(c => c.Importance)
+                    .HasConversion<string>() // Save enum as string
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity
+                    .Property(c => c.OwnerId)
+                    .IsRequired();
+
+                entity
+                    .HasOne(c => c.UserOwner)
+                    .WithMany(u => u.ChecklistItems)
+                    .HasForeignKey(c => c.OwnerId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

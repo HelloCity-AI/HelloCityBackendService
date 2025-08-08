@@ -32,24 +32,27 @@ namespace HelloCity.Models.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Importance")
-                        .HasColumnType("integer");
+                    b.Property<string>("Importance")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<bool>("IsComplete")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserOwnerId")
-                        .HasColumnType("uuid");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ChecklistItemId");
 
-                    b.HasIndex("UserOwnerId");
+                    b.HasIndex("OwnerId");
 
-                    b.ToTable("ChecklistItem");
+                    b.ToTable("ChecklistItems");
                 });
 
             modelBuilder.Entity("HelloCity.Models.Entities.Users", b =>
@@ -127,7 +130,7 @@ namespace HelloCity.Models.Migrations
                 {
                     b.HasOne("HelloCity.Models.Entities.Users", "UserOwner")
                         .WithMany("ChecklistItems")
-                        .HasForeignKey("UserOwnerId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -138,7 +141,6 @@ namespace HelloCity.Models.Migrations
                 {
                     b.Navigation("ChecklistItems");
                 });
-
 #pragma warning restore 612, 618
         }
     }
