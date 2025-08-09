@@ -1,6 +1,7 @@
 using HelloCity.IRepository;
 using HelloCity.Models;
 using HelloCity.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HelloCity.Repository{
   public class ChecklistItemRepository : IChecklistItemRepository
@@ -9,6 +10,13 @@ namespace HelloCity.Repository{
     public ChecklistItemRepository(AppDbContext context)
     {
       _context = context;
+    }
+    public async Task<List<ChecklistItem>?> GetChecklistItemsAsync(Guid id)
+    {
+      var user = await _context.Users
+        .Include(u => u.ChecklistItems) 
+        .FirstOrDefaultAsync(u => u.UserId == id);
+      return user.ChecklistItems;
     }
     public async Task<ChecklistItem> AddChecklistItemAsync(Guid id, ChecklistItem newChecklistItem)
     {
