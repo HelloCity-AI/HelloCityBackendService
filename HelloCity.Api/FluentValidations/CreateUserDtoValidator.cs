@@ -3,12 +3,11 @@ using HelloCity.Api.DTOs.Users;
 using HelloCity.Models.Enums;
 namespace HelloCity.FluentValidations
 {
-    public class CreateUserDtoValidator:AbstractValidator<CreateUserDto>
+    public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     {
         public CreateUserDtoValidator()
         {
             RuleFor(x => x.Username)
-                .NotEmpty().WithMessage("Username is required.")
                 .MaximumLength(50).WithMessage("Username must be at most 50 characters.")
                 .MinimumLength(1).WithMessage("Username must be at least 1 characters. ");
 
