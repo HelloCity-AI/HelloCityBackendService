@@ -55,17 +55,14 @@ namespace HelloCity.Services
         public async Task<Users> EditUserAsync(Guid id, Users updatedUser)
         {
             var existingUser = await _userRepository.GetUserByIdAsync(id);
-            if (existingUser == null)
-            {
-                throw new Exception("User not found");
-            }
+            if (existingUser == null) throw new Exception("User not found");
             existingUser.Username = updatedUser.Username;
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
             existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
             existingUser.Gender = updatedUser.Gender;
             existingUser.UpdatedAt = DateTime.UtcNow;
-
+            existingUser.ChecklistItems = updatedUser.ChecklistItems;
             await _userRepository.UpdateUserAsync(existingUser);
             return existingUser;
         }

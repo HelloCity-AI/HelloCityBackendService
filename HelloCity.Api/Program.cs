@@ -10,6 +10,9 @@ using HelloCity.Models;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 
@@ -49,15 +52,47 @@ public class Program
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development
         builder.Services.AddScoped<ITestUserService, TestUserService>();
-
+        builder.Services.AddScoped<ITestUserService, TestUserService>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new() { Title = "HelloCity.Api", Version = "v1" });
+
+            // add JWT Bearer support
+            c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                Description = "input form��Bearer {your JWT token}"
+            });
+
+            c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+        });
+
 
         //Register Repository and Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IChecklistItemRepository, ChecklistItemRepository>();
+        builder.Services.AddScoped<IChecklistItemService, ChecklistItemService>();
 
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
@@ -69,7 +104,24 @@ public class Program
             cfg => { },
             typeof(UserProfile).Assembly
         );
-        
+
+        // JWT Authentication
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = "https://dev-aqrrgsknjfy2121f.au.auth0.com"; // auth0 domain
+                options.Audience = "https://hellocity.api"; // ��  same as front-end .env.local audience
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+
+
         //cors policy
         builder.Services.AddCors(options =>
         {
@@ -93,7 +145,7 @@ public class Program
         app.UseMiddleware<GlobalExceptionMiddleware>();
 
         app.UseCors("AllowReactApp");
-
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 
