@@ -8,7 +8,6 @@ namespace HelloCity.Api.FluentValidations
         public EditUserDtoValidator()
         {
             RuleFor(x => x.Username)
-                .NotEmpty().WithMessage("Username is required.")
                 .MaximumLength(50).WithMessage("Username must be at most 50 characters.")
                 .MinimumLength(1).WithMessage("Username must be at least 1 characters. ");
 
