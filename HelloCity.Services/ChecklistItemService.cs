@@ -37,7 +37,7 @@ namespace HelloCity.Services
         throw new KeyNotFoundException($"User with ID {userId} not found.");
       }
       var userChecklistItems = await _checklistItemRepository.GetChecklistItemsAsync(userId);
-      return userChecklistItems;
+      return userChecklistItems ?? new List<ChecklistItem>();
     }
   }
 }

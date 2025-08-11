@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace HelloCity.Api.Controllers
 {
-  [Route("api/users/{userId}/checklist-item")]
+  [Route("api")]
   [ApiController]
   public class ChecklistItemController : ControllerBase
   {
@@ -26,7 +26,7 @@ namespace HelloCity.Api.Controllers
       _logger = logger;
     }
 
-    [HttpPost]
+    [HttpPost("/users/{userId}/checklist-item")]
     public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid userId, CreateChecklistItemDto newChecklistItemDto)
     {
       _logger.LogInformation("Creating checklist for User with ID: {userId}", userId);
@@ -48,22 +48,14 @@ namespace HelloCity.Api.Controllers
         return Problem("An unexpected error occurred.");
       }
     }
-    [HttpGet]
+    [HttpGet("checklist-item/{userId}")]
     public async Task<ActionResult<List<ChecklistItem>>> GetChecklistItems(Guid userId)
     {
       _logger.LogInformation("Getting checklist for User with ID: {userId}", userId);
       try
       {
         var userChecklistItems = await _checklistItemService.GetChecklistItemsAsync(userId);
-        var checklistItemDtos = userChecklistItems.Select(item => new ChecklistItemDto
-        {
-          ChecklistItemId = item.ChecklistItemId,
-          OwnerId = item.OwnerId,
-          Title = item.Title,
-          Description = item.Description,
-          IsComplete = item.IsComplete,
-          Importance = item.Importance
-        }).ToList();
+        var checklistItemDtos = _mapper.Map<List<ChecklistItemDto>>(userChecklistItems);
         return Ok(checklistItemDtos);
       }
       catch (KeyNotFoundException ex)
