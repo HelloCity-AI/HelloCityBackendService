@@ -5,5 +5,6 @@ namespace HelloCity.IServices
     public interface IChecklistItemService
     {
         Task<ChecklistItem> AddChecklistItemAsync(Guid userId, ChecklistItem newChecklistItem);
+        Task<List<ChecklistItem>> GetChecklistItemsAsync(Guid userId);
     }
 }
