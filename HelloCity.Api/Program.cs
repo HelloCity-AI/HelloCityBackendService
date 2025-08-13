@@ -68,7 +68,7 @@ public class Program
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                Description = "input form��Bearer {your JWT token}"
+                Description = "input form Bearer {your JWT token}"
             });
 
             c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -110,7 +110,7 @@ public class Program
             .AddJwtBearer(options =>
             {
                 options.Authority = "https://dev-aqrrgsknjfy2121f.au.auth0.com"; // auth0 domain
-                options.Audience = "https://hellocity.api"; // ��  same as front-end .env.local audience
+                options.Audience = "https://hellocity.api"; 
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
