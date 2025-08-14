@@ -1,8 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using HelloCity.Api.FluentValidations;
 using HelloCity.Api.Middlewares.GlobalException;
+using HelloCity.Api.Profiles;
+using HelloCity.FluentValidations;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
-using HelloCity.Api.Profiles;
 using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
@@ -35,8 +39,15 @@ public class Program
         });
 
         // Add services to the container.
+        // Add FluentValidation
 
         builder.Services.AddControllers();
+
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<EditUserDtoValidator>();
+        builder.Services.AddFluentValidationAutoValidation();
+
 
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development
@@ -57,7 +68,7 @@ public class Program
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                Description = "input form£ºBearer {your JWT token}"
+                Description = "input form Bearer {your JWT token}"
             });
 
             c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -99,7 +110,7 @@ public class Program
             .AddJwtBearer(options =>
             {
                 options.Authority = "https://dev-aqrrgsknjfy2121f.au.auth0.com"; // auth0 domain
-                options.Audience = "https://hellocity.api"; // ¡û  same as front-end .env.local audience
+                options.Audience = "https://hellocity.api"; 
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
