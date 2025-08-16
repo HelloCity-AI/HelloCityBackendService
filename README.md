@@ -1,284 +1,222 @@
 [![中文说明](https://img.shields.io/badge/文档-中文-blue?style=flat-square)](./README.zh-CN.md)
 
-# Hello City Server
+# HelloCity Backend Service
 
-A modern backend project based on .NET 8, ASP.NET Core, and a layered architecture (Api/Services/Models/IServices), supporting PostgreSQL database, suitable for rapid development and deployment.
+A modern backend service based on .NET 8, providing user management and checklist functionality with layered architecture, JWT authentication, and PostgreSQL database support.
 
-## Requirements
+## Quick Start
 
-- .NET SDK: **8.0 or above**
-- PostgreSQL: **16 or above** (recommended to use Docker Compose)
-- Docker Desktop: **4.43.1 or above**
-- Recommended OS: Windows, macOS, Linux
+### Requirements
 
-## Getting Started
+- **.NET SDK**: 8.0 or higher
+- **PostgreSQL**: 16 or higher
+- **Docker Desktop**: 4.43.1 or higher
+- **Operating System**: Windows, macOS, Linux
 
-1. **Clone the project and enter the directory:**
+### 1. Clone Project
 
-   ```bash
-   git clone <repo-url/ssh>
-   cd HelloCityBackendService
-   ```
+```bash
+git clone https://github.com/HelloCity-AI/HelloCityBackendService.git
+cd HelloCityBackendService
+```
 
-2. **Start the database:**
+### 2. Start Database
 
-   ```bash
-   docker compose up
-   ```
+```bash
+docker compose up
+```
 
-   > The API service in compose.yaml is currently commented out, so only the database service will be started.
-   > If you want to start the API with Docker, uncomment the relevant lines in compose.yaml, refer to step 6, and restart compose.
-   > For development and debugging, it is recommended to use dotnet run to start the API directly.
+> API service is commented out in compose.yaml, only database will start. For development/debugging, recommend using `dotnet run`.
 
-3. **Create local configuration file (one-time setup):**
+### 3. Configure Database Connection
 
-   Before running the project locally, copy the example config:
+**Important: Never commit real passwords to repository!**
 
-   ```bash
-   cp HelloCity.Api/appsettings.Development.json.example HelloCity.Api/appsettings.Development.json
-   ```
+```bash
+# Copy configuration template
+cp HelloCity.Api/appsettings.Development.json.example HelloCity.Api/appsettings.Development.json
+```
 
-   Then update it with your own local database credentials and settings.
+Then edit `appsettings.Development.json` with your database information. Please contact team for development environment database connection details.
 
-   ⚠️ appsettings.Development.json is gitignored and should never be committed to the repository.
+> `appsettings.Development.json` is in .gitignore and will never be committed to repository
 
-4. **Initialize the database table and insert test data:**
+### 4. Initialize Database
 
-   Use DBeaver, Navicat, or other database clients to connect to Postgres, select the `HelloCityDb` database, and execute the following SQL:
+Connect to PostgreSQL using database client and execute:
 
-   ```sql
-   CREATE TABLE IF NOT EXISTS test (
-     "Id" SERIAL PRIMARY KEY,
-     "Email" VARCHAR(255) NOT NULL,
-     "Password" VARCHAR(255) NOT NULL
-   );
+```sql
+CREATE TABLE IF NOT EXISTS test (
+  "Id" SERIAL PRIMARY KEY,
+  "Email" VARCHAR(255) NOT NULL,
+  "Password" VARCHAR(255) NOT NULL
+);
 
-   INSERT INTO test ("Email", "Password") VALUES
-     ('huachi@123.com', 'dadsa'),
-     ('huachi@123.com', 'dadsa'),
-     ('huachi@123.com', 'dadsa');
-   ```
+INSERT INTO test ("Email", "Password") VALUES
+  ('test@example.com', 'testpass'),
+  ('demo@example.com', 'demopass');
+```
 
-   > Default database connection info (see `HelloCity.Api/appsettings.Development.json` and `compose.yaml`):
-   >
-   > - Host: `localhost`
-   > - Port: `5432`
-   > - Database: `HelloCityDb`
-   > - Username: `root`
-   > - Password: `root123`
+### 5. Run Project
 
-5. **Restore dependencies:**
+```bash
+# Install dependencies
+dotnet restore
 
-   ```bash
-   dotnet restore
-   ```
+# Start API service
+cd HelloCity.Api
+dotnet run
+```
 
-6. **Run the API (recommended for development/debugging):**
+Visit http://localhost:5000/swagger to view API documentation
 
-   ```bash
-   cd HelloCity.Api
-   dotnet run
-   ```
+## Running Tests
 
-   - Default listening port: `http://localhost:5000`.
-   - This is the recommended way for development/debugging (hot reload, friendly logs).
+### Unit Tests
 
-7. **Run the API with Docker (optional):**
+```bash
+# Run all tests
+dotnet test
 
-   - Since the API service is commented out in compose.yaml, uncomment the relevant lines if you want to use Docker.
-   - When using Docker, host port `5050` maps to container port `8080`, i.e.:
-     - Access at `http://localhost:5050`
-   - Make sure ASP.NET Core listens on port 8080 in the container (`EXPOSE 8080` is set in Dockerfile).
-   - **Note: If using Docker, you must hardcode the listening port to 8080 in `Program.cs` before `builder.Build()`. Recommended Kestrel config:**
+# Generate coverage report
+dotnet test --collect:"XPlat Code Coverage"
+```
 
-     ```csharp
-     builder.WebHost.ConfigureKestrel(options =>
-     {
-         options.ListenAnyIP(8080);
-     });
-     ```
+### Generate HTML Coverage Report
 
-8. **Verify API and database connection:**
+```bash
+# 1. Install report generator tool (first time only)
+dotnet tool install --global dotnet-reportgenerator-globaltool
 
-   - If using dotnet run, visit [http://localhost:5000/api/TestUser](http://localhost:5000/api/TestUser)
-   - If using Docker, visit [http://localhost:5050/api/TestUser](http://localhost:5050/api/TestUser)
-   - You should see the test data you inserted.
+# 2. Generate report
+reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:Html
 
-## How to run unit test
+# 3. View report
+open coverage-report/index.html  # macOS
+start coverage-report/index.html # Windows
+```
 
-This project integrates xUnit unit tests, with test code located in the `HelloCity.Tests` directory. You can run and view unit test results as follows:
+## API Endpoints
 
-1. **Restore dependencies** (if not already done):
+### User Management
 
-   ```bash
-   dotnet restore
-   ```
+- **GET** `/api/user-profile/{id}` - Get user information
+- **POST** `/api/user-profile` - Create user
+- **PUT** `/api/user-profile/{id}` - Update user information
+- **POST** `/api/user-profile/{userId}/checklist-item` - Create checklist item for user
+- **GET** `/api/user-profile/{userId}/checklist-item` - Get user's checklist
 
-2. **Run all unit tests**:
+### Test Endpoints
 
-   ```bash
-   dotnet test
-   ```
+- **GET** `/api/TestUser` - Test database connection (requires JWT authentication)
 
-   You will see detailed output for passed/failed tests.
-
-3. **View test code example (A minimal test code was created already for learning purpose)**
-
-   For example, `UnitTest.cs` tests the `UnitTestService.SumInt` method:
-
-   ```csharp
-   [Theory]
-   [InlineData(1, 2, 3)]
-   [InlineData(-1, -2, -3)]
-   public void SumInt_ReturnsCorrectSum(int a, int b, int expected)
-   {
-       var unitTest = new UnitTestService();
-       var result = unitTest.SumInt(a, b);
-       Assert.Equal(expected, result);
-   }
-   ```
-
-   You can add more test cases in the `HelloCity.Tests` directory to cover your business logic.
-
-4. **Generate code coverage report (optional)**
-
-   If you want to check code coverage, run:
-
-   ```bash
-   dotnet test --collect:"XPlat Code Coverage"
-   ```
-
-   The coverage report will be generated under the `HelloCity.Tests/TestResults` directory.
-
-5. **Generate and view HTML coverage report (optional)**
-
-   (1) **Install report generator tool globally** (run once):
-
-   ```bash
-   dotnet tool install --global dotnet-reportgenerator-globaltool
-   ```
-
-   Make sure `$HOME/.dotnet/tools` is in your PATH (for macOS/Linux, add to your shell config):
-
-   ```bash
-   export PATH="$PATH:$HOME/.dotnet/tools"
-   ```
-
-   (2) **Generate HTML report**:
-
-   ```bash
-   reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:Html
-   ```
-
-   (3) **Open HTML report**:
-
-   - macOS: `open coverage-report/index.html`
-   - Windows: `start coverage-report/index.html`
-
-   **Common issue: `reportgenerator: command not found`**
-
-   **macOS / Linux:**  
-   Add to your shell config:
-
-   ```bash
-   export PATH="$PATH:$HOME/.dotnet/tools"
-   ```
-
-   Then restart your terminal or run `source ~/.zshrc`
-
-   **Windows (usually auto-configured):**  
-   If not recognized, make sure this path is included in your PATH environment variable:
-
-   ```
-   %USERPROFILE%\.dotnet\tools
-   ```
-
-For more detailed instructions, see `HelloCity.Tests/unit-test.md`.
-
-6. **API**
-   **GET/api/user-profile/{id}**
-   Response Example:
-   {
-   "userId": "e7f3127d-88ae-4d5e-b1a4-c13c99fb1234",
-   "username": "alice_dev",
-   "email": "alice@example.com",
-   "gender": "Female",
-   "city": "Sydney",
-   "preferredLanguage": "en",
-   "lastJoinDate": "2025-07-22T12:00:00Z"
-   }
-   **POST/api/user-profile**
-   Request Body:
-   {
-   "username": "john_dev",
-   "email": "john@example.com",
-   "password": "P@ssword123",
-   "gender": "Male",
-   "nationality": "Australia",
-   "city": "Sydney",
-   "preferredLanguage": "en"
-   }
-
-   Response Example (201 Created):
-   {
-   "message": "create user successfully",
-   "data": {
-   "userId": "123e4567-e89b-12d3-a456-426614174000",
-   "username": "john_dev",
-   "email": "john@example.com"
-   }
-   }
-
-   **PUT/api/user-profile/{id}**
-   Request Body:
-
-   {
-   "username": "john_dev_updated",
-   "email": "john_updated@example.com",
-   "gender": "Male",
-   "nationality": "New Zealand",
-   "city": "Auckland",
-   "preferredLanguage": "en"
-   }
-
-   Response Example (200 OK):
-
-   {
-   "message": "edit user successfully",
-   "data": {
-   "userId": "123e4567-e89b-12d3-a456-426614174000",
-   "username": "john_dev_updated",
-   "email": "john_updated@example.com"
-   }
-   }
-
-## Tech Stack
-
-- [.NET 8](https://dotnet.microsoft.com/)
-- [ASP.NET Core](https://learn.microsoft.com/aspnet/core)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Swagger](https://swagger.io/) (auto-generated API docs)
-- [xUnit](https://xunit.net/) (unit testing)
-- [coverlet](https://github.com/coverlet-coverage/coverlet) (code coverage)
-- [ReportGenerator](https://danielpalme.github.io/ReportGenerator/) (coverage HTML report)
+Visit `/swagger` page for detailed API documentation.
 
 ## Project Structure
 
-- `Api Layer`: Web API entry, controllers, configs, startup files, etc.
-- `Service Layer`: Contains business logic, uses repositories.
-- `Repository Layer`: Handles database operations via EF Core.
-- `Models/`: Defines entities, DTOs, and enums.
-- `Middleware/`: Handles cross-cutting concerns (authentication, error handling, CORS).
-- `Tests/`: Unit and integration tests.
-- `compose.yaml`: Docker Compose config (Postgres, etc.)
-- `hello-city-server.sln`: Solution file
+```
+HelloCity/
+├── HelloCity.Api/           # API Layer - Controllers, configurations and DTOs
+├── HelloCity.Services/      # Business logic layer
+├── HelloCity.Repository/    # Data access layer
+├── HelloCity.IRepository/   # Repository interfaces
+├── HelloCity.IServices/     # Service interfaces
+├── HelloCity.Models/        # Entity models and database context
+├── HelloCity.Tests/         # Test projects
+└── compose.yaml            # Docker configuration
+```
 
-## Notes
+### Design Patterns
 
-- Swagger is enabled by default in development, visit `/swagger` for API docs.
-- Only `TestUser` related APIs and services are for testing; extend with real business logic as needed.
-- For development/debugging, prefer dotnet run; Docker is mainly for deployment or integration testing.
-- To customize DB connection, ports, etc., edit `HelloCity.Api/appsettings.Development.json` or set environment variables.
+- **Layered Architecture**: API → Services → Repository → Database
+- **Dependency Injection**: All services managed through DI container
+- **Repository Pattern**: Data access abstraction
+- **DTO Pattern**: Data transfer objects handled in API layer
 
-For further improvements or questions, feel free to ask!
+## Tech Stack
+
+### Core Framework
+
+- **.NET 8** - Runtime framework
+- **ASP.NET Core** - Web API framework
+- **Entity Framework Core** - ORM
+- **PostgreSQL** - Database
+
+### Development Tools
+
+- **AutoMapper** - Object mapping
+- **FluentValidation** - Data validation
+- **Serilog** - Structured logging
+- **Swagger** - API documentation
+
+### Authentication & Authorization
+
+- **JWT Bearer** - Token authentication
+- **Auth0** - Identity service
+
+### Testing Framework
+
+- **xUnit** - Unit testing framework
+- **Moq** - Mocking framework
+- **FluentAssertions** - Fluent assertion library
+- **Coverlet** - Code coverage
+- **ReportGenerator** - Coverage reports
+
+### Deployment Tools
+
+- **Docker** - Containerization
+- **Docker Compose** - Service orchestration
+
+## Development Configuration
+
+### Database Migration
+
+```bash
+# Add migration
+dotnet ef migrations add MigrationName --project HelloCity.Models
+
+# Update database
+dotnet ef database update --project HelloCity.Api
+```
+
+### View Logs
+
+Log files are saved in `Logs/` directory with daily rolling retention of 7 days.
+
+### CORS Configuration
+
+Default allows frontend access from `http://localhost:3000`.
+
+## Development Standards
+
+### Branch Naming
+
+```bash
+git checkout -b SCRUM-123-feature-name
+```
+
+### Code Commits
+
+- Follow [Conventional Commits](https://www.conventionalcommits.org/) specification
+- Run tests before each commit to ensure they pass
+
+### Configuration Files
+
+- Commit `appsettings.json` and `appsettings.Development.json.example`
+- Never commit `appsettings.Development.json` (contains real passwords)
+
+## Deployment Guide
+
+### Docker Deployment
+
+```bash
+# Uncomment API service configuration in compose.yaml
+docker compose up
+# Access http://localhost:5050
+```
+
+### Production Environment Variables
+
+- `ConnectionStrings__DefaultConnection` - Database connection string
+- `JWT__Authority` - JWT validation address
+- `JWT__Audience` - JWT audience
