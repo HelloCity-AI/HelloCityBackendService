@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using HelloCity.Models.Entities;
 using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using HelloCity.Api.DTOs.ChecklistItem;
+using System.Diagnostics;
 
 namespace HelloCity.Api.Controllers
 {
@@ -15,9 +18,10 @@ namespace HelloCity.Api.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-
-        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger)
+        private readonly IChecklistItemService _checklistItemService;
+        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger, IChecklistItemService checklistItemService)
         {
+            _checklistItemService = checklistItemService;
             _userService = userService;
             _mapper = mapper;
             _logger = logger;
@@ -66,7 +70,7 @@ namespace HelloCity.Api.Controllers
 
             return CreatedAtAction(
                 nameof(GetUserProfile),
-                new { id = userDto.UserId }, 
+                new { id = userDto.UserId },
                 new
                 {
                     message = "create user successfully",
@@ -105,6 +109,30 @@ namespace HelloCity.Api.Controllers
                 }
             });
         }
+
+        [HttpPut]
+        public async Task<IActionResult> EditCheckListItem([FromBody] Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
+        {
+            _logger.LogInformation("Editing checklist for User with ID: {userId}", userId);
+            try
+            {
+                var editChecklistItem = _mapper.Map<ChecklistItem>(editChecklistItemDto);
+                var savedChecklistItem = await _checklistItemService.EditChecklistItemAsync(userId, itemId, editChecklistItem);
+                var checklistItemDto = _mapper.Map<ChecklistItemDto>(savedChecklistItem);
+                return Created("/api/checklist-item/" + checklistItemDto.ChecklistItemId, checklistItemDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User not found with ID: {userId}", userId);
+                return NotFound("User not found");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while creating checklist item for User with ID: {userId}", userId);
+                return Problem("An unexpected error occurred.");
+            }
+        }
+
 
     }
 }
