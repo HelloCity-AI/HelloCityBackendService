@@ -5,7 +5,7 @@
 namespace HelloCity.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateUserModelRemovePassword : Migration
+    public partial class ReplacePasswordWithSubId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,8 @@ namespace HelloCity.Models.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "SubId",
                 table: "Users",
-                type: "text",
+                type: "character varying(100)",
+                maxLength: 100,
                 nullable: false,
                 defaultValue: "");
         }

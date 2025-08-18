@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HelloCity.Models.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250818135637_UpdateUserModelRemovePassword")]
-    partial class UpdateUserModelRemovePassword
+    [Migration("20250818141300_ReplacePasswordWithSubId")]
+    partial class ReplacePasswordWithSubId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,8 @@ namespace HelloCity.Models.Migrations
 
                     b.Property<string>("SubId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("University")
                         .HasMaxLength(100)
