@@ -53,53 +53,53 @@ namespace HelloCity.Tests.Services
     [Fact]
     public async Task CreateChecklistItemAsync_ShouldSetCorrectProperties_WhenChecklistItemIsCreated()
     {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var user = new Users
-        {
-            UserId = userId,
-            Username = "john_dev",
-            Email = "john@example.com",
-            Password = "P@ssword123",
-            Gender = Gender.Male,
-            Nationality = "Australia",
-            City = "Sydney",
-            PreferredLanguage = PreferredLanguage.en,
-            ChecklistItems = new List<ChecklistItem>()
-        };
+      // Arrange
+      var userId = Guid.NewGuid();
+      var user = new Users
+      {
+        UserId = userId,
+        Username = "john_dev",
+        Email = "john@example.com",
+        SubId = "P@ssword123",
+        Gender = Gender.Male,
+        Nationality = "Australia",
+        City = "Sydney",
+        PreferredLanguage = PreferredLanguage.en,
+        ChecklistItems = new List<ChecklistItem>()
+      };
 
-        var newChecklistItem = new ChecklistItem
-        {
-            Title = "Buy groceries",
-            Description = "Buy milk, eggs, and bread",
-            Importance = ImportanceLevel.Medium,
-            IsComplete = false,
-            OwnerId = userId,
-            UserOwner = user
-        };
+      var newChecklistItem = new ChecklistItem
+      {
+        Title = "Buy groceries",
+        Description = "Buy milk, eggs, and bread",
+        Importance = ImportanceLevel.Medium,
+        IsComplete = false,
+        OwnerId = userId,
+        UserOwner = user
+      };
 
-        _userRepositoryMock.Setup(r => r.GetUserByIdAsync(userId))
-            .ReturnsAsync(user);
+      _userRepositoryMock.Setup(r => r.GetUserByIdAsync(userId))
+          .ReturnsAsync(user);
 
-        _checklistItemRepositoryMock.Setup(r =>
-            r.AddChecklistItemAsync(userId, It.IsAny<ChecklistItem>()))
-            .ReturnsAsync((Guid _, ChecklistItem item) => item);
+      _checklistItemRepositoryMock.Setup(r =>
+          r.AddChecklistItemAsync(userId, It.IsAny<ChecklistItem>()))
+          .ReturnsAsync((Guid _, ChecklistItem item) => item);
 
-        _userRepositoryMock.Setup(r =>
-            r.UpdateUserAsync(It.IsAny<Users>()))
-            .ReturnsAsync((Users u) => u);
+      _userRepositoryMock.Setup(r =>
+          r.UpdateUserAsync(It.IsAny<Users>()))
+          .ReturnsAsync((Users u) => u);
 
-        // Act
-        var result = await _checklistItemService.AddChecklistItemAsync(userId, newChecklistItem);
+      // Act
+      var result = await _checklistItemService.AddChecklistItemAsync(userId, newChecklistItem);
 
-        // Assert
-        result.Should().NotBeNull();
-        result.Title.Should().Be("Buy groceries");
-        result.OwnerId.Should().Be(userId);
-        result.UserOwner.Username.Should().Be("john_dev");
-        _userRepositoryMock.Verify(r => r.GetUserByIdAsync(userId), Times.Once);
-        _checklistItemRepositoryMock.Verify(r => r.AddChecklistItemAsync(userId, It.IsAny<ChecklistItem>()), Times.Once);
-        _userRepositoryMock.Verify(r => r.UpdateUserAsync(It.IsAny<Users>()), Times.Once);
+      // Assert
+      result.Should().NotBeNull();
+      result.Title.Should().Be("Buy groceries");
+      result.OwnerId.Should().Be(userId);
+      result.UserOwner.Username.Should().Be("john_dev");
+      _userRepositoryMock.Verify(r => r.GetUserByIdAsync(userId), Times.Once);
+      _checklistItemRepositoryMock.Verify(r => r.AddChecklistItemAsync(userId, It.IsAny<ChecklistItem>()), Times.Once);
+      _userRepositoryMock.Verify(r => r.UpdateUserAsync(It.IsAny<Users>()), Times.Once);
     }
 
 
@@ -113,7 +113,7 @@ namespace HelloCity.Tests.Services
         UserId = userId,
         Username = "john_dev",
         Email = "john@example.com",
-        Password = "P@ssword123",
+        SubId = "P@ssword123",
         Gender = Gender.Male,
         Nationality = "Australia",
         City = "Sydney",

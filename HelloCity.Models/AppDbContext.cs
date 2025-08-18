@@ -33,7 +33,7 @@ namespace HelloCity.Models
                     .IsUnique();
 
                 entity
-                    .Property(u => u.Password)
+                    .Property(u => u.SubId)
                     .IsRequired()
                     .HasMaxLength(100);
 

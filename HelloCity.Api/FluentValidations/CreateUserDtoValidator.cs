@@ -16,10 +16,9 @@ namespace HelloCity.FluentValidations
                 .EmailAddress().WithMessage("Email must be valid.")
                 .MaximumLength(100).WithMessage("Email must be at most 100 characters.");
 
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MaximumLength(100).WithMessage("Password must be at most 100 characters.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
+            RuleFor(x => x.SubId)
+                .NotEmpty().WithMessage("SubId is required.")
+                .MaximumLength(100).WithMessage("SubId must be at most 100 characters.");
 
             RuleFor(x => x.Gender)
                 .IsInEnum().WithMessage("Gender is invalid.");

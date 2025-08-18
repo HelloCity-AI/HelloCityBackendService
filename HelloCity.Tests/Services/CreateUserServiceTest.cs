@@ -30,7 +30,7 @@ public class CreateUserServiceTest
         {
             Username = "john_dev",
             Email = "john@example.com",
-            Password = "P@ssword123",
+            SubId = "P@ssword123",
             Gender = Gender.Male,
             Nationality = "Australia",
             City = "Sydney",
