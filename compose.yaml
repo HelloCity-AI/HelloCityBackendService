@@ -1,16 +1,17 @@
 ﻿services:
-  #    hellocity.api:
-  #      image: hellocity.api
-  #      build:
-  #        context: .
-  #        dockerfile: HelloCity.Api/Dockerfile
-  #      ports:
-  #        - "5050:8080"
-  #      environment:
-  #        - ASPNETCORE_ENVIRONMENT=Development
-  #        - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=HelloCityDb;Username=root;Password=root123
-  #      depends_on:
-  #        - postgres
+  hellocity.api:
+    image: hellocity.api
+    build:
+      context: .
+      dockerfile: HelloCity.Api/Dockerfile
+    ports:
+      - "5050:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=HelloCityDb;Username=root;Password=root123
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:16
@@ -24,6 +25,11 @@
       POSTGRES_DB: HelloCityDb
     volumes:
       - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pg_data:
