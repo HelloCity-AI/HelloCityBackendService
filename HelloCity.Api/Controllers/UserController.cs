@@ -111,7 +111,7 @@ namespace HelloCity.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditCheckListItem([FromBody] Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
+        public async Task<IActionResult> EditCheckListItem(Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
         {
             _logger.LogInformation("Editing checklist for User with ID: {userId}", userId);
             try
@@ -128,7 +128,7 @@ namespace HelloCity.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while creating checklist item for User with ID: {userId}", userId);
+                _logger.LogError(ex, "Unexpected error while editing checklist item for User with ID: {userId}", userId);
                 return Problem("An unexpected error occurred.");
             }
         }
