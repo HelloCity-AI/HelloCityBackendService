@@ -37,7 +37,7 @@ docker compose up
 cp HelloCity.Api/appsettings.Development.json.example HelloCity.Api/appsettings.Development.json
 ```
 
-Then edit `appsettings.Development.json` with your database information. Please contact team for development environment database connection details.
+Then edit `appsettings.Development.json` with your database information. For development environment, you can refer to the postgres service configuration in `compose.yaml`.
 
 > `appsettings.Development.json` is in .gitignore and will never be committed to repository
 
@@ -57,7 +57,17 @@ INSERT INTO test ("Email", "Password") VALUES
   ('demo@example.com', 'demopass');
 ```
 
-### 5. Run Project
+### 5. Database Migration
+
+```bash
+# Add initial migration
+dotnet ef migrations add InitialCreate --project HelloCity.Models
+
+# Update database
+dotnet ef database update --project HelloCity.Api
+```
+
+### 6. Run Project
 
 ```bash
 # Install dependencies
@@ -169,16 +179,6 @@ HelloCity/
 
 ## Development Configuration
 
-### Database Migration
-
-```bash
-# Add migration
-dotnet ef migrations add MigrationName --project HelloCity.Models
-
-# Update database
-dotnet ef database update --project HelloCity.Api
-```
-
 ### View Logs
 
 Log files are saved in `Logs/` directory with daily rolling retention of 7 days.
@@ -220,3 +220,7 @@ docker compose up
 - `ConnectionStrings__DefaultConnection` - Database connection string
 - `JWT__Authority` - JWT validation address
 - `JWT__Audience` - JWT audience
+
+---
+
+Last updated: 2025-08-16

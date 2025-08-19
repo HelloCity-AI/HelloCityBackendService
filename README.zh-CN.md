@@ -16,7 +16,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/HelloCity-AI/HelloCityBackendService.git
 cd HelloCityBackendService
 ```
 
@@ -57,7 +57,17 @@ INSERT INTO test ("Email", "Password") VALUES
   ('demo@example.com', 'demopass');
 ```
 
-### 5. 运行项目
+### 5. 数据库迁移
+
+```bash
+# 添加迁移
+dotnet ef migrations add InitialCreate --project HelloCity.Models
+
+# 更新数据库
+dotnet ef database update --project HelloCity.Api
+```
+
+### 6. 运行项目
 
 ```bash
 # 安装依赖
@@ -169,16 +179,6 @@ HelloCity/
 
 ## 开发配置
 
-### 数据库迁移
-
-```bash
-# 添加迁移
-dotnet ef migrations add MigrationName --project HelloCity.Models
-
-# 更新数据库
-dotnet ef database update --project HelloCity.Api
-```
-
 ### 日志查看
 
 日志文件保存在 `Logs/` 目录，按天滚动保留 7 天。
@@ -220,3 +220,7 @@ docker compose up
 - `ConnectionStrings__DefaultConnection` - 数据库连接串
 - `JWT__Authority` - JWT 验证地址
 - `JWT__Audience` - JWT 受众
+
+---
+
+最后更新：2025-08-16
