@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -21,6 +21,7 @@
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
         <PackageReference Include="AWSSDK.S3" Version="3.7.307.44" />
+        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.301" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,6 +7,8 @@ using HelloCity.Repository;
 using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Amazon.S3;
+using Amazon.Extensions.NETCore.Setup;
 
 
 namespace HelloCity.Api;
@@ -49,6 +51,10 @@ public class Program
         //Register Repository and Services
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        
+        // Register AWS S3 Services
+        builder.Services.AddAWSService<IAmazonS3>();
+        builder.Services.AddScoped<IS3Service, S3Service>();
 
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
@@ -80,6 +86,9 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
+        // Enable static files
+        app.UseStaticFiles();
 
         app.UseMiddleware<GlobalExceptionMiddleware>();
 

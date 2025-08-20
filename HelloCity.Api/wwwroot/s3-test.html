@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Bucket 管理测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        #bucketList {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪣 S3 Bucket 管理测试</h1>
+        
+        <div class="section">
+            <h3>📋 列出所有存储桶</h3>
+            <button onclick="listBuckets()">获取存储桶列表</button>
+            <div id="bucketListResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h3>➕ 创建存储桶</h3>
+            <input type="text" id="createBucketName" placeholder="输入存储桶名称 (例如: my-test-bucket-123)">
+            <button onclick="createBucket()">创建存储桶</button>
+            <div id="createResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h3>🔍 检查存储桶是否存在</h3>
+            <input type="text" id="checkBucketName" placeholder="输入存储桶名称">
+            <button onclick="checkBucket()">检查存储桶</button>
+            <div id="checkResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h3>🗑️ 删除存储桶</h3>
+            <input type="text" id="deleteBucketName" placeholder="输入要删除的存储桶名称">
+            <button class="delete-btn" onclick="deleteBucket()">删除存储桶</button>
+            <div id="deleteResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/S3';
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function showResult(elementId, result, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function listBuckets() {
+            const result = await makeRequest(`${API_BASE}/list-buckets`);
+            const type = result.success ? 'success' : 'error';
+            showResult('bucketListResult', result.data || result.error, type);
+        }
+
+        async function createBucket() {
+            const bucketName = document.getElementById('createBucketName').value.trim();
+            if (!bucketName) {
+                showResult('createResult', '请输入存储桶名称', 'error');
+                return;
+            }
+
+            const result = await makeRequest(`${API_BASE}/create-bucket`, {
+                method: 'POST',
+                body: JSON.stringify({ bucketName })
+            });
+            
+            const type = result.success ? 'success' : 'error';
+            showResult('createResult', result.data || result.error, type);
+            
+            if (result.success) {
+                document.getElementById('createBucketName').value = '';
+            }
+        }
+
+        async function checkBucket() {
+            const bucketName = document.getElementById('checkBucketName').value.trim();
+            if (!bucketName) {
+                showResult('checkResult', '请输入存储桶名称', 'error');
+                return;
+            }
+
+            const result = await makeRequest(`${API_BASE}/bucket-exists/${encodeURIComponent(bucketName)}`);
+            const type = result.success ? 'info' : 'error';
+            showResult('checkResult', result.data || result.error, type);
+        }
+
+        async function deleteBucket() {
+            const bucketName = document.getElementById('deleteBucketName').value.trim();
+            if (!bucketName) {
+                showResult('deleteResult', '请输入存储桶名称', 'error');
+                return;
+            }
+
+            if (!confirm(`确定要删除存储桶 "${bucketName}" 吗？此操作不可撤销！`)) {
+                return;
+            }
+
+            const result = await makeRequest(`${API_BASE}/delete-bucket/${encodeURIComponent(bucketName)}`, {
+                method: 'DELETE'
+            });
+            
+            const type = result.success ? 'success' : 'error';
+            showResult('deleteResult', result.data || result.error, type);
+            
+            if (result.success) {
+                document.getElementById('deleteBucketName').value = '';
+            }
+        }
+
+        // 页面加载时自动获取存储桶列表
+        window.onload = function() {
+            listBuckets();
+        };
+    </script>
+</body>
+</html>
