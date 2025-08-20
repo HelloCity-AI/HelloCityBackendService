@@ -66,6 +66,5 @@ namespace HelloCity.Services
             await _userRepository.UpdateUserAsync(existingUser);
             return existingUser;
         }
-
     }
 }
