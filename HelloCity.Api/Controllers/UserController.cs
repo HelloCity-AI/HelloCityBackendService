@@ -9,7 +9,7 @@ using HelloCity.Api.DTOs.ChecklistItem;
 
 namespace HelloCity.Api.Controllers
 {
-    [Route("api/user-profile")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
