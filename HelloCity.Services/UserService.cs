@@ -57,6 +57,7 @@ namespace HelloCity.Services
             var existingUser = await _userRepository.GetUserByIdAsync(id);
             if (existingUser == null) throw new Exception("User not found");
             existingUser.Username = updatedUser.Username;
+            existingUser.Email = updatedUser.Email;
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
             existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
