@@ -17,7 +17,7 @@ namespace HelloCity.Repository
       var user = await _context.Users
         .Include(u => u.ChecklistItems)
         .FirstOrDefaultAsync(u => u.UserId == id);
-      if (user == null) return null;
+      if (user is null) return null;
       return user.ChecklistItems;
     }
 

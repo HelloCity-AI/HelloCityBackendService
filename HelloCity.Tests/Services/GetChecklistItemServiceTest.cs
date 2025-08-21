@@ -81,7 +81,7 @@ namespace HelloCity.Tests.Services
 
       _userRepositoryMock
           .Setup(r => r.GetUserByIdAsync(userId))
-          .ReturnsAsync((Users)null); 
+          .ReturnsAsync((Users)null!); 
 
       // Act
       var act = async () => await _checklistItemService.GetChecklistItemsAsync(userId);
@@ -119,6 +119,5 @@ namespace HelloCity.Tests.Services
         _userRepositoryMock.Verify(r => r.GetUserByIdAsync(userId), Times.Once);
         _checklistItemRepositoryMock.Verify(r => r.GetChecklistItemsAsync(userId), Times.Once);
     }
-
   }
 }
