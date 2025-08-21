@@ -52,7 +52,7 @@ namespace HelloCity.Services
       existingCheckListItem.Description = editChecklistItem.Description;
       existingCheckListItem.IsComplete = editChecklistItem.IsComplete;
       existingCheckListItem.Importance = editChecklistItem.Importance;
-      await _checklistItemRepository.EditChecklistItemAsync(itemId, existingCheckListItem);
+      await _checklistItemRepository.EditChecklistItemAsync(existingCheckListItem);
       return existingCheckListItem;
     }
   }

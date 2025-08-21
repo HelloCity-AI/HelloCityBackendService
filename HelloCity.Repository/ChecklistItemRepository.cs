@@ -35,7 +35,7 @@ namespace HelloCity.Repository
       return newChecklistItem;
     }
 
-    public async Task<ChecklistItem> EditChecklistItemAsync(Guid id, ChecklistItem editChecklistItem)
+    public async Task<ChecklistItem> EditChecklistItemAsync(ChecklistItem editChecklistItem)
     {
       _context.ChecklistItems.Update(editChecklistItem);
       await _context.SaveChangesAsync();
