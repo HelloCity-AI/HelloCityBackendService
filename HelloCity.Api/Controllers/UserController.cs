@@ -145,7 +145,7 @@ namespace HelloCity.Api.Controllers
                 return NotFound("User not found");
             }
         }
-        [HttpPut]
+        [HttpPut("{userId}/checklist-item")]
         public async Task<IActionResult> EditCheckListItem(Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
         {
             _logger.LogInformation("Editing checklist for User with ID: {userId}", userId);
