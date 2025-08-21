@@ -57,7 +57,7 @@ namespace HelloCity.Api.Controllers
         /// <param name="dto">User creation data</param>
         /// <returns>Basic info of the created user</returns>
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
