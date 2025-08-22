@@ -51,10 +51,10 @@ namespace HelloCity.Api.Controllers
         }
 
         /// <summary>
-       /// Get current user by Auth0 sub (from access token).
-       /// </summary>
-    [Authorize]
-    [HttpGet("me")]
+        /// Get current user by Auth0 sub (from access token).
+        /// </summary>
+        [Authorize]
+        [HttpGet("me")]
         public async Task<ActionResult<UserDto>> Me()
         {
             var sub = User.FindFirst("sub")?.Value
