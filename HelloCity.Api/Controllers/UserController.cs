@@ -6,6 +6,7 @@ using HelloCity.Models.Entities;
 using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
 using HelloCity.Api.DTOs.ChecklistItem;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelloCity.Api.Controllers
 {
@@ -49,6 +50,32 @@ namespace HelloCity.Api.Controllers
             return Ok(userDto);
         }
 
+        /// <summary>
+       /// Get current user by Auth0 sub (from access token).
+       /// </summary>
+    [Authorize]
+    [HttpGet("me")]
+        public async Task<ActionResult<UserDto>> Me()
+        {
+            var sub = User.FindFirst("sub")?.Value
+                      ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (string.IsNullOrWhiteSpace(sub))
+            {
+                _logger.LogWarning("GET /api/user/me missing 'sub' claim");
+                return Unauthorized("Missing 'sub' claim.");
+            }
+
+            var user = await _userService.GetBySubIdAsync(sub);
+            if (user is null)
+            {
+                _logger.LogInformation("No user found for sub {sub}", sub);
+                return NotFound($"User with sub '{sub}' not found.");
+            }
+
+            var dto = _mapper.Map<UserDto>(user);
+            return Ok(dto);
+        }
 
         /// <summary>
         /// Create a new user

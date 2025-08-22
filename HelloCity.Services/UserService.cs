@@ -36,6 +36,11 @@ namespace HelloCity.Services
             return user;
         }
 
+        public async Task<Users?> GetBySubIdAsync(string subId)
+        {
+            return await _userRepository.GetUserBySubIdAsync(subId);
+        }
+
         /// <summary>
         /// Post user profile
         /// </summary>
