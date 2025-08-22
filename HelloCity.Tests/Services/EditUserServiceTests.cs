@@ -33,7 +33,7 @@ namespace HelloCity.Tests.Services
                 UserId = userId,
                 Username = "string222",
                 Email = "string222333@example.com",
-                Password = "P@ssword123",
+                SubId = "P@ssword123",
                 Gender = Gender.Male,
                 Nationality = "Australia",
                 City = "Sydney",
@@ -86,7 +86,7 @@ namespace HelloCity.Tests.Services
 
             _userRepositoryMock.Setup(r => r.GetUserByIdAsync(userId)).ReturnsAsync((Users?)null);
 
-            Func<Task> act = async() => await _userService.EditUserAsync(userId, updatedUser);
+            Func<Task> act = async () => await _userService.EditUserAsync(userId, updatedUser);
 
             //assert
             await act.Should().ThrowAsync<Exception>()
