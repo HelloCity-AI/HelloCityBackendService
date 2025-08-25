@@ -66,7 +66,7 @@ namespace HelloCity.Api.Controllers
                 return Unauthorized("Missing 'sub' claim.");
             }
 
-            var user = await _userService.GetBySubIdAsync(sub);
+            var user = await _userService.GetUserByAuthSubIdAsync(sub);
             if (user is null)
             {
                 _logger.LogInformation("No user found for sub {sub}", sub);

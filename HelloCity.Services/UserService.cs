@@ -36,7 +36,7 @@ namespace HelloCity.Services
             return user;
         }
 
-        public async Task<Users?> GetBySubIdAsync(string subId)
+        public async Task<Users?> GetUserByAuthSubIdAsync(string subId)
         {
             return await _userRepository.GetUserBySubIdAsync(subId);
         }
