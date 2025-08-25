@@ -3,7 +3,8 @@ using HelloCity.Models;
 using HelloCity.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace HelloCity.Repository{
+namespace HelloCity.Repository
+{
   public class ChecklistItemRepository : IChecklistItemRepository
   {
     private readonly AppDbContext _context;
@@ -14,16 +15,31 @@ namespace HelloCity.Repository{
     public async Task<List<ChecklistItem>?> GetChecklistItemsAsync(Guid id)
     {
       var user = await _context.Users
-        .Include(u => u.ChecklistItems) 
+        .Include(u => u.ChecklistItems)
         .FirstOrDefaultAsync(u => u.UserId == id);
       if (user is null) return null;
       return user.ChecklistItems;
     }
+
+    public async Task<ChecklistItem?> GetSingleChecklistItemAsync(Guid userId, Guid itemId)
+    {
+      var checkItem = await _context.ChecklistItems
+        .FirstOrDefaultAsync(c => c.OwnerId == userId && c.ChecklistItemId == itemId);
+      return checkItem;
+    }
+
     public async Task<ChecklistItem> AddChecklistItemAsync(Guid id, ChecklistItem newChecklistItem)
     {
       _context.ChecklistItems.Add(newChecklistItem);
       await _context.SaveChangesAsync();
       return newChecklistItem;
+    }
+
+    public async Task<ChecklistItem> EditChecklistItemAsync(ChecklistItem editChecklistItem)
+    {
+      _context.ChecklistItems.Update(editChecklistItem);
+      await _context.SaveChangesAsync();
+      return editChecklistItem;
     }
   }
 }

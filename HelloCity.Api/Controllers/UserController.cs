@@ -57,7 +57,7 @@ namespace HelloCity.Api.Controllers
         /// <param name="dto">User creation data</param>
         /// <returns>Basic info of the created user</returns>
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
@@ -145,5 +145,29 @@ namespace HelloCity.Api.Controllers
                 return NotFound("User not found");
             }
         }
+        [HttpPut("{userId}/checklist-item")]
+        public async Task<IActionResult> EditCheckListItem(Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
+        {
+            _logger.LogInformation("Editing checklist for User with ID: {userId}", userId);
+            try
+            {
+                var editChecklistItem = _mapper.Map<ChecklistItem>(editChecklistItemDto);
+                var savedChecklistItem = await _checklistItemService.EditChecklistItemAsync(userId, itemId, editChecklistItem);
+                var checklistItemDto = _mapper.Map<ChecklistItemDto>(savedChecklistItem);
+                return Created("/api/checklist-item/" + checklistItemDto.ChecklistItemId, checklistItemDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User not found with ID: {userId}", userId);
+                return NotFound("User not found");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while editing checklist item for User with ID: {userId}", userId);
+                return Problem("An unexpected error occurred.");
+            }
+        }
+
+
     }
 }

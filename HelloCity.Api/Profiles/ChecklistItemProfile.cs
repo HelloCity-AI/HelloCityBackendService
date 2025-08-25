@@ -4,12 +4,13 @@ using HelloCity.Api.DTOs.ChecklistItem;
 
 namespace HelloCity.Api.Profiles
 {
-    public class ChecklistItemProfile : Profile
+  public class ChecklistItemProfile : Profile
+  {
+    public ChecklistItemProfile()
     {
-      public ChecklistItemProfile()
-      {
-        CreateMap<CreateChecklistItemDto, ChecklistItem>();
-        CreateMap<ChecklistItem, ChecklistItemDto>();
-      }
+      CreateMap<CreateChecklistItemDto, ChecklistItem>();
+      CreateMap<ChecklistItem, ChecklistItemDto>();
+      CreateMap<EditCheckListItemDto, ChecklistItem>();
     }
+  }
 }

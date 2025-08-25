@@ -39,5 +39,21 @@ namespace HelloCity.Services
       var userChecklistItems = await _checklistItemRepository.GetChecklistItemsAsync(userId);
       return userChecklistItems ?? new List<ChecklistItem>();
     }
+
+    public async Task<ChecklistItem> EditChecklistItemAsync(Guid userId, Guid itemId, ChecklistItem editChecklistItem)
+    {
+      var existingUser = await _userRepository.GetUserByIdAsync(userId);
+      if (existingUser == null)
+      {
+        throw new KeyNotFoundException($"User with ID {userId} not found.");
+      }
+      var existingCheckListItem = await _checklistItemRepository.GetSingleChecklistItemAsync(userId, itemId);
+      existingCheckListItem.Title = editChecklistItem.Title;
+      existingCheckListItem.Description = editChecklistItem.Description;
+      existingCheckListItem.IsComplete = editChecklistItem.IsComplete;
+      existingCheckListItem.Importance = editChecklistItem.Importance;
+      await _checklistItemRepository.EditChecklistItemAsync(existingCheckListItem);
+      return existingCheckListItem;
+    }
   }
 }
