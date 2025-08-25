@@ -31,6 +31,17 @@ namespace HelloCity.Repository
         }
 
         /// <summary>
+        /// Get user by SubId
+        /// </summary>
+        /// <param name="subId"></param>
+        /// <returns></returns>
+        public async Task<Users?> GetUserBySubIdAsync(string subId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.SubId == subId);
+        }
+
+        /// <summary>
         /// Post user profile
         /// </summary>
         ///to be added
