@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HelloCity.Models
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Users> Users { get; set;}
+        public DbSet<Users> Users { get; set; }
 
         public DbSet<ChecklistItem> ChecklistItems { get; set; }
 
@@ -33,9 +33,8 @@ namespace HelloCity.Models
                     .IsUnique();
 
                 entity
-                    .Property(u => u.Password)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                    .Property(u => u.SubId)
+                    .IsRequired();
 
                 entity
                     .Property(u => u.Avatar)
