@@ -1,27 +1,27 @@
 ﻿services:
-  #    hellocity.api:
-  #      image: hellocity.api
-  #      build:
-  #        context: .
-  #        dockerfile: HelloCity.Api/Dockerfile
-  #      ports:
-  #        - "5050:8080"
-  #      environment:
-  #        - ASPNETCORE_ENVIRONMENT=Development
-  #        - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=HelloCityDb;Username=root;Password=root123
-  #      depends_on:
-  #        - postgres
+  hellocity.api:
+    image: hellocity.api
+    build:
+      context: .
+      dockerfile: HelloCity.Api/Dockerfile
+    ports:
+      - "5050:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:16
     container_name: hellocity_postgres
     restart: always
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root123
-      POSTGRES_DB: HelloCityDb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pg_data:/var/lib/postgresql/data
 

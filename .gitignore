@@ -11,6 +11,7 @@ out/
 *.cache
 *.log
 **/coverage-report/
+.env
 #########################
 # Rider / ReSharper IDE #
 #########################
@@ -91,5 +92,4 @@ TestResults/
 
 ###############################
 # Code Coverage
-HelloCity.Api/appsettings.Development.json
 HelloCity.Api/Logs/
