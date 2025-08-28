@@ -19,7 +19,8 @@ jobs:
     env:
       POSTGRES_USER: root
       POSTGRES_DB: HelloCityDb
-      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }} # <— add this repo secret
+      # stored in repo secrets
+      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }} 
       ASPNETCORE_ENVIRONMENT: Development
 
     steps:
@@ -30,7 +31,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      # cache package from the first time run to speed up build from redcuing the downloading time
+
+      # cache NuGet packages to speed up builds
       - name: Set up .NET 8 (with cache)
         uses: actions/setup-dotnet@v4
         with:
@@ -59,23 +61,21 @@ jobs:
       - name: Build API image
         run: docker compose -f compose.yaml build hellocity.api
 
-      - name: Start Postgres
-        run: docker compose -f compose.yaml up -d postgres
+      - name: Start services
+        run: docker compose -f compose.yaml up -d postgres hellocity.api
 
-      - name: Wait for Postgres
+      # ---- Health check (API + DB) ----
+      - name: Wait for API health
         run: |
           for i in {1..60}; do
-            if docker compose -f compose.yaml exec -T postgres pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB" >/dev/null 2>&1; then
-              echo "Postgres is ready"; exit 0
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5050/health)
+            if [ "$status" -eq 200 ]; then
+              echo "API is healthy"; exit 0
             fi
+            echo "Waiting for API... (HTTP $status)"
             sleep 2
           done
-          echo "Postgres did not become ready in time"; exit 1
-
-      - name: Start API
-        run: docker compose -f compose.yaml up -d hellocity.api
-
-      # (add Health check later)
+          echo "API did not become healthy in time"; exit 1
 
       - name: Collect logs
         if: always()
