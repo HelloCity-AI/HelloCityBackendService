@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using HelloCity.Services.Options;
 
 
 namespace HelloCity.Api;
@@ -48,6 +49,9 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<EditUserDtoValidator>();
         builder.Services.AddFluentValidationAutoValidation();
 
+        //Binding S3ClientOption from appsettings and register ImageStorageService
+        builder.Services.Configure<S3ClientOptions>(builder.Configuration.GetSection("AwsS3"));
+        builder.Services.AddSingleton<IImageStorageService, ImageStorageService>();
 
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development

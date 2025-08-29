@@ -16,7 +16,7 @@ namespace HelloCity.Models.Entities
         ///  URL of the user's avatar.
         ///  Currently， uses a placeholder. To be replaced with an S3-hosted image after AWS integration.
         /// </summary>
-        public string Avatar { get; set; } = "https://via.placeholder.com/150";
+        public string? Avatar { get; set; } 
         public Gender Gender { get; set; } = GenderEnum.PreferNotToSay;
         public string? Nationality { get; set; }
         public string? City { get; set; }

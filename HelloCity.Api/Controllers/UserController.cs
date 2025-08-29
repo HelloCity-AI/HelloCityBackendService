@@ -1,12 +1,15 @@
-﻿using HelloCity.IServices;
+﻿using AutoMapper;
+using HelloCity.Api.DTOs.ChecklistItem;
 using HelloCity.Api.DTOs.Users;
+using HelloCity.IServices;
+using HelloCity.Models.Entities;
+using HelloCity.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HelloCity.Models.Entities;
-using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
-using HelloCity.Api.DTOs.ChecklistItem;
-using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using System.Net.Mime;
 
 namespace HelloCity.Api.Controllers
 {
@@ -18,10 +21,13 @@ namespace HelloCity.Api.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
         private readonly IChecklistItemService _checklistItemService;
-        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger, IChecklistItemService checklistItemService)
+        private readonly IImageStorageService _imageStorageService;
+
+        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger, IChecklistItemService checklistItemService, IImageStorageService ImageStorageService)
         {
             _checklistItemService = checklistItemService;
             _userService = userService;
+            _imageStorageService = ImageStorageService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -89,7 +95,14 @@ namespace HelloCity.Api.Controllers
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
 
+            if(dto.File != null)
+            {
+
+            }
+
             var user = _mapper.Map<Users>(dto);
+            user.UserId = Guid.NewGuid();
+
             var result = await _userService.CreateUserAsync(user);
             var userDto = _mapper.Map<UserDto>(result);
 
@@ -195,6 +208,65 @@ namespace HelloCity.Api.Controllers
             }
         }
 
+        [HttpPost("{id}/profile-image")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadProfileImageRequest req, CancellationToken ct)
+        {
+            _logger.LogInformation("Uploading profile image for user with ID: {UserId}", id);
+
+            var imageFile = req.File;
+
+            if (imageFile is null) return BadRequest(new { message = "File is required." });
+            if (imageFile.Length == 0) return BadRequest(new { message = "File is empty." });
+            if (imageFile.Length > 5 * 1024 * 1024)
+            {
+                throw new BadHttpRequestException("File size exceeds 5 MB limit");
+            }           
+            if (imageFile.ContentType != "image/jpeg" && imageFile.ContentType != "image/png")
+            {
+                throw new NotSupportedException($"Unsupported Content-Type: {imageFile.ContentType}");
+            }
+
+            await using var fileStream = imageFile.OpenReadStream();
+            var fileExtension = Path.GetExtension(imageFile.FileName);
+
+            var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString(), ct);
+
+            return Ok(new
+            {
+                message = "Avatar uploaded",
+                data = new
+                {
+                    s3Key = result.Key,
+                    presignedGetUrl = result.GetUrl
+                }
+            });
+        }
+
+        [HttpGet("{id}/profile-image/url")]
+        public async Task<ActionResult> GetAvatarUrl(Guid id)
+        {
+            _logger.LogInformation("Profile Image is required for ID: {UserId}", id);
+
+            var user = await _userService.GetUserProfileAsync(id);
+
+            if (user == null)
+            {
+                _logger.LogWarning("User not found with ID: {UserId}", id);
+                throw new KeyNotFoundException("User not found with given ID.");
+            }
+
+            var avatarS3Key = user.Avatar;
+
+            //This is for existing user who has never uploaded any profile image before. So frontend will only show default avatar.
+            if (string.IsNullOrEmpty(avatarS3Key))
+            {
+                return NotFound(new { message = "No profile image uploaded." });
+            }
+
+            var url = _imageStorageService.GeneratePresignedUrl(avatarS3Key);
+            return Ok(new { url });
+        }
 
     }
 }

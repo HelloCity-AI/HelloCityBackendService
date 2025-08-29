@@ -49,7 +49,7 @@ namespace HelloCity.Services
 
         public async Task<Users> CreateUserAsync(Users user)
         {
-            user.UserId = Guid.NewGuid();
+            
             user.LastJoinDate = DateTimeHelper.GetSydneyNow();
 
             await _userRepository.AddUserAsync(user);

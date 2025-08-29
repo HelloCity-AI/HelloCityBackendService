@@ -14,6 +14,8 @@ namespace HelloCity.Api.DTOs.Users
         public required string Username { get; set; }
         public required string Email { get; set; }
         public required string SubId { get; set; }
+        //Optional profile image uploading, if not uploaded, it will be null.
+        public IFormFile? File { get; set; }
         public Gender Gender { get; set; }
         public string? Nationality { get; set; }
         public string? City { get; set; }
