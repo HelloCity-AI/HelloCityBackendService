@@ -3,7 +3,6 @@ using FluentValidation.AspNetCore;
 using HelloCity.Api.FluentValidations;
 using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.Api.Profiles;
-using HelloCity.FluentValidations;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;

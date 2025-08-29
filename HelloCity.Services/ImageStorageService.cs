@@ -5,8 +5,6 @@ using Amazon.S3.Model;
 using HelloCity.Services.Options;
 using Microsoft.Extensions.Options;
 
-
-
 namespace HelloCity.Services
 {
     public class ImageStorageService : IImageStorageService
@@ -21,7 +19,7 @@ namespace HelloCity.Services
             _s3 = new AmazonS3Client(RegionEndpoint.GetBySystemName(_opt.Region)); 
         }
 
-        public async Task<UploadResult> UploadProfileImageAsync(Stream fileStream, string fileExtension, string userId, CancellationToken ct = default)
+        public async Task<UploadResult> UploadProfileImageAsync(Stream fileStream, string fileExtension, string userId)
         {
 
             //This is only for code test to print out which S3 bucket is connected
@@ -40,10 +38,8 @@ namespace HelloCity.Services
                 
             };
 
-            var s3BucketResponse = await _s3.PutObjectAsync(s3BucketPutRequest, ct);
-
+            var s3BucketResponse = await _s3.PutObjectAsync(s3BucketPutRequest);
             var presignedURL = GeneratePresignedUrl(objectKey);
-
             return new UploadResult(objectKey, presignedURL);
         }
 

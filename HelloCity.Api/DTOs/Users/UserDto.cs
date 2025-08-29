@@ -12,7 +12,7 @@ namespace HelloCity.Api.DTOs.Users
         public Guid UserId { get; set; }
         public required string Username { get; set; }
         public required string Email { get; set;}
-        public required string Avatar { get; set; }
+        public string? AvatarUrl { get; set; }
         public Gender Gender { get; set; }
         public string? Nationality { get; set; }
         public string? City { get; set; }

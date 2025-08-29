@@ -37,7 +37,7 @@ namespace HelloCity.Models
                     .IsRequired();
 
                 entity
-                    .Property(u => u.Avatar)
+                    .Property(u => u.AvatarKey)
                     .HasMaxLength(255);
 
                 entity

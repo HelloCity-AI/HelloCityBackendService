@@ -7,8 +7,10 @@ using HelloCity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.JSInterop.Infrastructure;
 using System.IO;
+using System.IO.Pipes;
 using System.Net.Mime;
 
 namespace HelloCity.Api.Controllers
@@ -90,21 +92,28 @@ namespace HelloCity.Api.Controllers
         /// <param name="dto">User creation data</param>
         /// <returns>Basic info of the created user</returns>
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateUser([FromForm] CreateUserDto dto)
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
-
-            if(dto.File != null)
-            {
-
-            }
-
+            
+            var imageFile = dto.File;
             var user = _mapper.Map<Users>(dto);
-            user.UserId = Guid.NewGuid();
+            string? PresignedUrl = null;
+
+            if (imageFile != null)
+            {
+                using Stream fileStream = imageFile.OpenReadStream();
+                var fileExtension = Path.GetExtension(imageFile.FileName);
+                var imageResult = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, user.UserId.ToString());
+                user.AvatarKey = imageResult.Key;
+                PresignedUrl = imageResult.GetUrl;
+            }
 
             var result = await _userService.CreateUserAsync(user);
             var userDto = _mapper.Map<UserDto>(result);
+            userDto.AvatarUrl = PresignedUrl;
 
             return CreatedAtAction(
                 nameof(GetUserProfile),
@@ -116,7 +125,8 @@ namespace HelloCity.Api.Controllers
                     {
                         userId = userDto.UserId,
                         username = userDto.Username,
-                        email = userDto.Email
+                        email = userDto.Email,
+                        avatarURL = userDto.AvatarUrl
                     }
                 });
         }
@@ -230,7 +240,7 @@ namespace HelloCity.Api.Controllers
             await using var fileStream = imageFile.OpenReadStream();
             var fileExtension = Path.GetExtension(imageFile.FileName);
 
-            var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString(), ct);
+            var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString());
 
             return Ok(new
             {
@@ -256,7 +266,7 @@ namespace HelloCity.Api.Controllers
                 throw new KeyNotFoundException("User not found with given ID.");
             }
 
-            var avatarS3Key = user.Avatar;
+            var avatarS3Key = user.AvatarKey;
 
             //This is for existing user who has never uploaded any profile image before. So frontend will only show default avatar.
             if (string.IsNullOrEmpty(avatarS3Key))
