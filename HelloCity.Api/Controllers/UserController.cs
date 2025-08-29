@@ -178,6 +178,7 @@ namespace HelloCity.Api.Controllers
                 return NotFound("User not found");
             }
         }
+
         [Authorize]
         [HttpPut("{userId}/checklist-item")]
         public async Task<IActionResult> EditCheckListItem(Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
@@ -198,6 +199,29 @@ namespace HelloCity.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error while editing checklist item for User with ID: {userId}", userId);
+                return Problem("An unexpected error occurred.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("{userId}/checklist-item")]
+        public async Task<IActionResult> DeleteChecklistItem(Guid userId, Guid itemId)
+        {
+            _logger.LogInformation("Deleting checklist item {itemId} for User with ID: {userId}", itemId, userId);
+
+            try
+            {
+                await _checklistItemService.DeleteChecklistItemAsync(userId, itemId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Delete failed. Not found. UserId: {userId}, ItemId: {itemId}", userId, itemId);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting checklist item. UserId: {userId}, ItemId: {itemId}", userId, itemId);
                 return Problem("An unexpected error occurred.");
             }
         }

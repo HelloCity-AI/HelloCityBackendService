@@ -41,5 +41,10 @@ namespace HelloCity.Repository
       await _context.SaveChangesAsync();
       return editChecklistItem;
     }
+    public async Task DeleteChecklistItemAsync(ChecklistItem checklistItem)
+    {
+      _context.ChecklistItems.Remove(checklistItem);
+      await _context.SaveChangesAsync();
+    }
   }
 }
