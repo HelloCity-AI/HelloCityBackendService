@@ -13,7 +13,7 @@ namespace HelloCity.Api.DTOs.Users
     {
         public required string Username { get; set; }
         public required string Email { get; set; }
-        public string? Avatar { get; set; }
+        public IFormFile? File { get; set; }
         public Gender Gender { get; set; }
         public string? Nationality { get; set; }
         public string? City { get; set; }

@@ -45,9 +45,12 @@ public class Program
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSingleton(new ImageFileValidator());
         builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<EditUserDtoValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<UploadImageRequestValidator>();
         builder.Services.AddFluentValidationAutoValidation();
+        
 
         //Binding S3ClientOption from appsettings and register ImageStorageService
         builder.Services.Configure<S3ClientOptions>(builder.Configuration.GetSection("AwsS3"));

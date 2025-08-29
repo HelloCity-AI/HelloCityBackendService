@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using HelloCity.Api.DTOs.Users;
 using HelloCity.Models.Enums;
-namespace HelloCity.FluentValidations
+
+namespace HelloCity.Api.FluentValidations
 {
     public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     {
-        public CreateUserDtoValidator()
+        public CreateUserDtoValidator(ImageFileValidator validator)
         {
             RuleFor(x => x.Username)
                 .MaximumLength(50).WithMessage("Username must be at most 50 characters.")
@@ -32,6 +33,12 @@ namespace HelloCity.FluentValidations
             RuleFor(x => x.City)
                 .MaximumLength(100).WithMessage("City must be at most 100 characters.")
                 .When(x => !string.IsNullOrWhiteSpace(x.City));
+
+            //IFormFIle Validation
+            When(x => x.File != null, () =>
+            {
+                RuleFor(x => x.File!).SetValidator(validator);
+            });
         }
 
     }

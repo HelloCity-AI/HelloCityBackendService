@@ -210,7 +210,7 @@ namespace HelloCity.Api.Controllers
 
         [HttpPost("{id}/profile-image")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadProfileImageRequest req, CancellationToken ct)
+        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadImageRequest req, CancellationToken ct)
         {
             _logger.LogInformation("Uploading profile image for user with ID: {UserId}", id);
 
