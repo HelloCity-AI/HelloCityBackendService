@@ -141,10 +141,22 @@ namespace HelloCity.Api.Controllers
         public async Task<IActionResult> EditUser([FromBody] EditUserDto dto, Guid id)
         {
             _logger.LogInformation("Editing user with ID: {UserId}", id);
-
             var updatedUser = _mapper.Map<Users>(dto);
+            var imageFile = dto.File;
+            string? PresignedUrl = null;
+
+            if (imageFile != null)
+            {
+                using Stream fileStream = imageFile.OpenReadStream();
+                var fileExtension = Path.GetExtension(imageFile.FileName);
+                var imageResult = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, updatedUser.UserId.ToString());
+                updatedUser.AvatarKey = imageResult.Key;
+                PresignedUrl = imageResult.GetUrl;
+            }
+
             var result = await _userService.EditUserAsync(id, updatedUser);
             var userDto = _mapper.Map<UserDto>(result);
+            userDto.AvatarUrl = PresignedUrl;
 
             return Ok(new
             {
@@ -153,10 +165,12 @@ namespace HelloCity.Api.Controllers
                 {
                     userId = userDto.UserId,
                     username = userDto.Username,
-                    email = userDto.Email
+                    email = userDto.Email,
+                    avatarURL = userDto.AvatarUrl
                 }
             });
         }
+
         [HttpPost("{userId}/checklist-item")]
         public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid userId, CreateChecklistItemDto newChecklistItemDto)
         {
@@ -220,25 +234,12 @@ namespace HelloCity.Api.Controllers
 
         [HttpPost("{id}/profile-image")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadImageRequest req, CancellationToken ct)
+        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadImageRequest req)
         {
             _logger.LogInformation("Uploading profile image for user with ID: {UserId}", id);
 
-            var imageFile = req.File;
-
-            if (imageFile is null) return BadRequest(new { message = "File is required." });
-            if (imageFile.Length == 0) return BadRequest(new { message = "File is empty." });
-            if (imageFile.Length > 5 * 1024 * 1024)
-            {
-                throw new BadHttpRequestException("File size exceeds 5 MB limit");
-            }           
-            if (imageFile.ContentType != "image/jpeg" && imageFile.ContentType != "image/png")
-            {
-                throw new NotSupportedException($"Unsupported Content-Type: {imageFile.ContentType}");
-            }
-
-            await using var fileStream = imageFile.OpenReadStream();
-            var fileExtension = Path.GetExtension(imageFile.FileName);
+            await using var fileStream = req.File.OpenReadStream();
+            var fileExtension = Path.GetExtension(req.File.FileName);
 
             var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString());
 
@@ -268,7 +269,8 @@ namespace HelloCity.Api.Controllers
 
             var avatarS3Key = user.AvatarKey;
 
-            //This is for existing user who has never uploaded any profile image before. So frontend will only show default avatar.
+            //This is for existing user who has never uploaded any profile image before.
+            //So frontend will only show default avatar.
             if (string.IsNullOrEmpty(avatarS3Key))
             {
                 return NotFound(new { message = "No profile image uploaded." });
