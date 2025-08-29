@@ -67,7 +67,7 @@ jobs:
       # ---- Health check (API + DB) ----
       - name: Wait for API health
         run: |
-          for i in {1..60}; do
+          for i in {1..120}; do
             status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5050/health)
             if [ "$status" -eq 200 ]; then
               echo "API is healthy"; exit 0
