@@ -1,14 +1,9 @@
-﻿
-using HelloCity.Api.DTOs.ChecklistItem;
+﻿using HelloCity.IServices;
 using HelloCity.Api.DTOs.Users;
-using HelloCity.IServices;
 using HelloCity.Models.Entities;
-using HelloCity.Models.Migrations;
-using HelloCity.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
 using HelloCity.Api.DTOs.ChecklistItem;
 using Microsoft.AspNetCore.Authorization;
