@@ -45,36 +45,44 @@ jobs:
           path: '**/coverage.cobertura.xml'
           if-no-files-found: ignore
 
-      # ---- Docker Compose: build & run API + Postgres ----
+# ---- Docker Compose: build & run API + Postgres ----
       - name: Build API image
         run: docker compose -f compose.yaml build hellocity.api
-
+      
       - name: Start services
         run: docker compose -f compose.yaml up -d
-      - name: Debug before health check
+      
+      - name: Wait for services to stabilize
         run: |
-          echo "=== Current directory ==="
-          pwd
-          ls -la
-          echo "=== Docker status ==="
-          docker ps -a
-          echo "=== Compose status ==="
+          echo "Giving services 30 seconds to start up..."
+          sleep 30
+          echo "Services status:"
           docker compose -f compose.yaml ps
-          echo "=== API container logs ==="
-          docker compose -f compose.yaml logs hellocity.api --tail=20
-      # ---- Enhanced Health check verification ----
-      - name: Wait for services to be healthy
+      
+      - name: Wait for API health
         run: |
-          echo "Waiting for services to become healthy..."
-          timeout 300 bash -c '
-            until docker compose -f compose.yaml ps --format json | jq -e ".[] | select(.Health == \"healthy\")" > /dev/null 2>&1; do
-              echo "Services status:"
-              docker compose -f compose.yaml ps
-              echo "Waiting 5 seconds..."
-              sleep 5
-            done
-          '
-          echo "All services are healthy!"
+          echo "Starting health check..."
+          for i in {1..60}; do
+            echo "Health check attempt $i/60..."
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5050/health || echo "000")
+            echo "HTTP Status: $status"
+            
+            if [ "$status" = "200" ]; then
+              echo "API is healthy!"; 
+              exit 0
+            fi
+            
+            # Show logs every 10 attempts
+            if [ $((i % 10)) -eq 0 ]; then
+              echo "--- API logs (last 10 lines) ---"
+              docker compose -f compose.yaml logs hellocity.api --tail=10
+            fi
+            
+            sleep 3
+          done
+          echo "API health check failed after 3 minutes"
+          exit 1
+           
 
       - name: Verify API endpoints
         run: |
