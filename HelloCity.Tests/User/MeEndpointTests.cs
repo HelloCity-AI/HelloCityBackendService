@@ -64,7 +64,7 @@ namespace HelloCity.Tests.User
 						Username = "Alice",
 						Email = "alice@example.com",
 						SubId = TestAuthHandler.ExistingSub,
-						Avatar = "https://via.placeholder.com/150",
+						AvatarKey = "https://via.placeholder.com/150",
 						Gender = HelloCity.Models.Enums.Gender.PreferNotToSay,
 						PreferredLanguage = HelloCity.Models.Enums.PreferredLanguage.en,
 						LastJoinDate = DateTime.UtcNow

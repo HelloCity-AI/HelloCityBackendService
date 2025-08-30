@@ -3,6 +3,7 @@ using HelloCity.Api.DTOs.ChecklistItem;
 using HelloCity.Api.DTOs.Users;
 using HelloCity.IServices;
 using HelloCity.Models.Entities;
+using HelloCity.Models.Migrations;
 using HelloCity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -138,7 +139,8 @@ namespace HelloCity.Api.Controllers
         /// <param name="id">User Id</param>
         /// <returns>Updated user info</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditUser([FromBody] EditUserDto dto, Guid id)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> EditUser([FromForm] EditUserDto dto, Guid id)
         {
             _logger.LogInformation("Editing user with ID: {UserId}", id);
             var updatedUser = _mapper.Map<Users>(dto);
@@ -242,6 +244,9 @@ namespace HelloCity.Api.Controllers
             var fileExtension = Path.GetExtension(req.File.FileName);
 
             var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString());
+            var UpdatedAvatarKey = result.Key;
+
+            await _userService.EditUserAvatarKeyAsync(id, UpdatedAvatarKey);
 
             return Ok(new
             {

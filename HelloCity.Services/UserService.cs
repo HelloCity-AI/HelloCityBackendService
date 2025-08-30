@@ -66,11 +66,21 @@ namespace HelloCity.Services
             existingUser.City = updatedUser.City;
             existingUser.Nationality = updatedUser.Nationality;
             existingUser.PreferredLanguage = updatedUser.PreferredLanguage;
+            existingUser.AvatarKey = updatedUser.AvatarKey;
             existingUser.Gender = updatedUser.Gender;
             existingUser.UpdatedAt = DateTime.UtcNow;
             existingUser.ChecklistItems = updatedUser.ChecklistItems;
             await _userRepository.UpdateUserAsync(existingUser);
             return existingUser;
+        }
+
+        public async Task EditUserAvatarKeyAsync(Guid id,  string UpdatedAvatarKey)
+        {
+            var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null) throw new Exception("User not found");
+            existingUser.AvatarKey = UpdatedAvatarKey;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+            await _userRepository.UpdateUserAsync(existingUser);
         }
     }
 }

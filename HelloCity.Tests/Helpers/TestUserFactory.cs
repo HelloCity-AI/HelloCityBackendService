@@ -18,7 +18,7 @@ namespace HelloCity.Tests.Helpers
                 UserId = Guid.NewGuid(),
                 Username = "testuser",
                 Email = "test@example.com",
-                Avatar = "avatar.png",
+                AvatarKey = "avatar.png",
                 Gender = Gender.Male,
                 Nationality = "Australia",
                 City = "Sydney",
