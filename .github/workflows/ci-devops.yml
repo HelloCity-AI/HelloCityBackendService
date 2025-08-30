@@ -1,0 +1,113 @@
+name: CI Devops
+on:
+  # pull_request:
+  #   branches: [ main, develop ]
+  # for testing purpose
+  # push:
+  #   branches: [ DEVOPS-val ]
+  workflow_dispatch:
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  compose-ci:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: root
+      POSTGRES_DB: HelloCityDb
+      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      ASPNETCORE_ENVIRONMENT: Development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+      
+      - name: Restore
+        run: dotnet restore
+      
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      
+      - name: Test (with coverage)
+        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage"
+      
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: '**/coverage.cobertura.xml'
+          if-no-files-found: ignore
+
+      # ---- Docker Compose: build & run API + Postgres ----
+      - name: Build API image
+        run: docker compose -f compose.yaml build hellocity.api
+
+      - name: Start services
+        run: docker compose -f compose.yaml up -d
+
+      # ---- Enhanced Health check verification ----
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for services to become healthy..."
+          timeout 300 bash -c '
+            until docker compose -f compose.yaml ps --format json | jq -e ".[] | select(.Health == \"healthy\")" > /dev/null 2>&1; do
+              echo "Services status:"
+              docker compose -f compose.yaml ps
+              echo "Waiting 5 seconds..."
+              sleep 5
+            done
+          '
+          echo "All services are healthy!"
+
+      - name: Verify API endpoints
+        run: |
+          echo "Testing API endpoints..."
+          
+          # Test health endpoint
+          response=$(curl -s -w "%{http_code}" http://localhost:5050/health)
+          http_code="${response: -3}"
+          
+          if [ "$http_code" -eq 200 ]; then
+            echo "Health endpoint responding (HTTP $http_code)"
+          else
+            echo "Health endpoint failed (HTTP $http_code)"
+            exit 1
+          fi
+          
+      - name: Show service health status
+        if: always()
+        run: |
+          echo "=== Final Health Status ==="
+          docker compose -f compose.yaml ps
+          echo ""
+          echo "=== Health Check Details ==="
+          docker inspect hellocity.api --format='{{json .State.Health}}' | jq '.' || echo "No health data for API"
+          docker inspect hellocity_postgres --format='{{json .State.Health}}' | jq '.' || echo "No health data for Postgres"
+
+      - name: Collect logs
+        if: always()
+        run: |
+          docker compose -f compose.yaml ps || true
+          docker compose -f compose.yaml logs --no-color postgres > postgres.log || true
+          docker compose -f compose.yaml logs --no-color hellocity.api > api.log || true
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-logs
+          path: |
+            postgres.log
+            api.log
+          if-no-files-found: ignore
+
+      - name: Teardown
+        if: always()
+        run: docker compose -f compose.yaml down -v

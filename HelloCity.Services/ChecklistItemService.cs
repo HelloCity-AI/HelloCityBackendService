@@ -55,5 +55,21 @@ namespace HelloCity.Services
       await _checklistItemRepository.EditChecklistItemAsync(existingCheckListItem);
       return existingCheckListItem;
     }
+    public async Task DeleteChecklistItemAsync(Guid userId, Guid itemId)
+    {
+      var existingUser = await _userRepository.GetUserByIdAsync(userId);
+      if (existingUser == null)
+      {
+        throw new KeyNotFoundException($"User with ID {userId} not found.");
+      }
+
+      var existingItem = await _checklistItemRepository.GetSingleChecklistItemAsync(userId, itemId);
+      if (existingItem == null)
+      {
+        throw new KeyNotFoundException($"ChecklistItem with ID {itemId} not found.");
+      }
+
+      await _checklistItemRepository.DeleteChecklistItemAsync(existingItem);
+    }
   }
 }

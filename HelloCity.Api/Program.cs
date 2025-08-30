@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HelloCity.Api.FluentValidations;
@@ -11,10 +12,11 @@ using HelloCity.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using HelloCity.Api.HealthChecks;
 using HelloCity.Services.Options;
-
 
 namespace HelloCity.Api;
 
@@ -29,7 +31,8 @@ public class Program
         builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true,
+                reloadOnChange: true)
             .AddEnvironmentVariables();
 
         // Configure Serilog
@@ -78,19 +81,19 @@ public class Program
             });
 
             c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                    {
+                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                        {
+                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
                 }
-            },
-            Array.Empty<string>()
-        }
-    });
+            });
         });
 
 
@@ -103,7 +106,7 @@ public class Program
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-            b => b.MigrationsAssembly("HelloCity.Models")));
+                b => b.MigrationsAssembly("HelloCity.Models")));
         //Add AutoMapper 
 
         builder.Services.AddAutoMapper(
@@ -115,8 +118,8 @@ public class Program
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://dev-aqrrgsknjfy2121f.au.auth0.com"; // auth0 domain
-                options.Audience = "https://hellocity.api"; 
+                options.Authority = "https://hello-city.au.auth0.com"; // auth0 domain
+                options.Audience = "https://hellocity.api";
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -134,10 +137,13 @@ public class Program
             options.AddPolicy("AllowReactApp", policy =>
             {
                 policy.WithOrigins("http://localhost:3000")
-                      .AllowAnyHeader()
-                      .AllowAnyMethod();
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
+
+        // health check
+        builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
         var app = builder.Build();
 
@@ -154,7 +160,10 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-
+        app.MapHealthChecks("/health", new HealthCheckOptions()
+        {
+            ResponseWriter = HealthCheckResponseWriter.WriteResponse
+        });
         app.Run();
     }
 }
