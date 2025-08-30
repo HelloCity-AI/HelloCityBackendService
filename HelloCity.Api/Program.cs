@@ -4,7 +4,6 @@ using FluentValidation.AspNetCore;
 using HelloCity.Api.FluentValidations;
 using HelloCity.Api.Middlewares.GlobalException;
 using HelloCity.Api.Profiles;
-using HelloCity.FluentValidations;
 using HelloCity.IRepository;
 using HelloCity.IServices;
 using HelloCity.Models;
@@ -17,6 +16,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using HelloCity.Api.HealthChecks;
+using HelloCity.Services.Options;
 
 namespace HelloCity.Api;
 
@@ -47,10 +47,16 @@ public class Program
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSingleton(new ImageFileValidator());
         builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<EditUserDtoValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<UploadImageRequestValidator>();
         builder.Services.AddFluentValidationAutoValidation();
+        
 
+        //Binding S3ClientOption from appsettings and register ImageStorageService
+        builder.Services.Configure<S3ClientOptions>(builder.Configuration.GetSection("AwsS3"));
+        builder.Services.AddSingleton<IImageStorageService, ImageStorageService>();
 
         builder.Services.Configure<ApiConfigs>(builder.Configuration.GetSection("ApiConfigs"));
         // Only for test purpose, can be deleted when we start development

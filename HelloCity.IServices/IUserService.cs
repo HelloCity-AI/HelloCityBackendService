@@ -13,5 +13,7 @@ namespace HelloCity.IServices
         Task<Users> CreateUserAsync(Users user);
         Task<Users> EditUserAsync(Guid id, Users user);
         Task<Users?> GetUserByAuthSubIdAsync(string subId);
+
+        Task EditUserAvatarKeyAsync(Guid id, string UpdatedAvatarKey);
     }
 }

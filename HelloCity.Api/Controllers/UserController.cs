@@ -1,8 +1,8 @@
 ﻿using HelloCity.IServices;
 using HelloCity.Api.DTOs.Users;
+using HelloCity.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HelloCity.Models.Entities;
 using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
 using HelloCity.Api.DTOs.ChecklistItem;
@@ -19,10 +19,13 @@ namespace HelloCity.Api.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
         private readonly IChecklistItemService _checklistItemService;
-        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger, IChecklistItemService checklistItemService)
+        private readonly IImageStorageService _imageStorageService;
+
+        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger, IChecklistItemService checklistItemService, IImageStorageService ImageStorageService)
         {
             _checklistItemService = checklistItemService;
             _userService = userService;
+            _imageStorageService = ImageStorageService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -85,14 +88,28 @@ namespace HelloCity.Api.Controllers
         /// <param name="dto">User creation data</param>
         /// <returns>Basic info of the created user</returns>
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateUser([FromForm] CreateUserDto dto)
         {
             _logger.LogInformation("Creating user with email: {Email}", dto.Email);
-
+            
+            var imageFile = dto.File;
             var user = _mapper.Map<Users>(dto);
+            string? PresignedUrl = null;
+
+            if (imageFile != null)
+            {
+                using Stream fileStream = imageFile.OpenReadStream();
+                var fileExtension = Path.GetExtension(imageFile.FileName);
+                var imageResult = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, user.UserId.ToString());
+                user.AvatarKey = imageResult.Key;
+                PresignedUrl = imageResult.GetUrl;
+            }
+
             var result = await _userService.CreateUserAsync(user);
             var userDto = _mapper.Map<UserDto>(result);
+            userDto.AvatarUrl = PresignedUrl;
 
             return CreatedAtAction(
                 nameof(GetUserProfile),
@@ -104,7 +121,8 @@ namespace HelloCity.Api.Controllers
                     {
                         userId = userDto.UserId,
                         username = userDto.Username,
-                        email = userDto.Email
+                        email = userDto.Email,
+                        avatarURL = userDto.AvatarUrl
                     }
                 });
         }
@@ -117,13 +135,26 @@ namespace HelloCity.Api.Controllers
         /// <returns>Updated user info</returns>
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditUser([FromBody] EditUserDto dto, Guid id)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> EditUser([FromForm] EditUserDto dto, Guid id)
         {
             _logger.LogInformation("Editing user with ID: {UserId}", id);
-
             var updatedUser = _mapper.Map<Users>(dto);
+            var imageFile = dto.File;
+            string? PresignedUrl = null;
+
+            if (imageFile != null)
+            {
+                using Stream fileStream = imageFile.OpenReadStream();
+                var fileExtension = Path.GetExtension(imageFile.FileName);
+                var imageResult = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, updatedUser.UserId.ToString());
+                updatedUser.AvatarKey = imageResult.Key;
+                PresignedUrl = imageResult.GetUrl;
+            }
+
             var result = await _userService.EditUserAsync(id, updatedUser);
             var userDto = _mapper.Map<UserDto>(result);
+            userDto.AvatarUrl = PresignedUrl;
 
             return Ok(new
             {
@@ -132,12 +163,11 @@ namespace HelloCity.Api.Controllers
                 {
                     userId = userDto.UserId,
                     username = userDto.Username,
-                    email = userDto.Email
+                    email = userDto.Email,
+                    avatarURL = userDto.AvatarUrl
                 }
             });
         }
-
-        [Authorize]
         [HttpPost("{userId}/checklist-item")]
         public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid userId, CreateChecklistItemDto newChecklistItemDto)
         {
@@ -203,6 +233,56 @@ namespace HelloCity.Api.Controllers
             }
         }
 
+        [HttpPost("{id}/profile-image")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadAvatar(Guid id, [FromForm] UploadImageRequest req)
+        {
+            _logger.LogInformation("Uploading profile image for user with ID: {UserId}", id);
+
+            await using var fileStream = req.File.OpenReadStream();
+            var fileExtension = Path.GetExtension(req.File.FileName);
+
+            var result = await _imageStorageService.UploadProfileImageAsync(fileStream, fileExtension, id.ToString());
+            var UpdatedAvatarKey = result.Key;
+
+            await _userService.EditUserAvatarKeyAsync(id, UpdatedAvatarKey);
+
+            return Ok(new
+            {
+                message = "Avatar uploaded",
+                data = new
+                {
+                    s3Key = result.Key,
+                    presignedGetUrl = result.GetUrl
+                }
+            });
+        }
+
+        [HttpGet("{id}/profile-image/url")]
+        public async Task<ActionResult> GetAvatarUrl(Guid id)
+        {
+            _logger.LogInformation("Profile Image is required for ID: {UserId}", id);
+
+            var user = await _userService.GetUserProfileAsync(id);
+
+            if (user == null)
+            {
+                _logger.LogWarning("User not found with ID: {UserId}", id);
+                throw new KeyNotFoundException("User not found with given ID.");
+            }
+
+            var avatarS3Key = user.AvatarKey;
+
+            //This is for existing user who has never uploaded any profile image before.
+            //So frontend will only show default avatar.
+            if (string.IsNullOrEmpty(avatarS3Key))
+            {
+                return NotFound(new { message = "No profile image uploaded." });
+            }
+
+            var url = _imageStorageService.GeneratePresignedUrl(avatarS3Key);
+            return Ok(new { url });
+        }
         [Authorize]
         [HttpDelete("{userId}/checklist-item")]
         public async Task<IActionResult> DeleteChecklistItem(Guid userId, Guid itemId)
