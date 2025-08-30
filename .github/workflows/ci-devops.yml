@@ -51,7 +51,17 @@ jobs:
 
       - name: Start services
         run: docker compose -f compose.yaml up -d
-
+      - name: Debug before health check
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          ls -la
+          echo "=== Docker status ==="
+          docker ps -a
+          echo "=== Compose status ==="
+          docker compose -f compose.yaml ps
+          echo "=== API container logs ==="
+          docker compose -f compose.yaml logs hellocity.api --tail=20
       # ---- Enhanced Health check verification ----
       - name: Wait for services to be healthy
         run: |
