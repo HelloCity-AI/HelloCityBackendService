@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.JSInterop.Infrastructure;
 using HelloCity.Api.DTOs.ChecklistItem;
 using Microsoft.AspNetCore.Authorization;
+using HelloCity.Api.Extensions;
 
 namespace HelloCity.Api.Controllers
 {
@@ -32,6 +33,7 @@ namespace HelloCity.Api.Controllers
         /// </summary>
         /// <param name="id">User ID (Guid)</param>
         /// <returns>User profile info</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserProfile(Guid id)
         {
@@ -57,8 +59,7 @@ namespace HelloCity.Api.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<UserDto>> Me()
         {
-            var sub = User.FindFirst("sub")?.Value
-                      ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var sub = User.GetSub();
 
             if (string.IsNullOrWhiteSpace(sub))
             {
@@ -114,6 +115,7 @@ namespace HelloCity.Api.Controllers
         /// <param name="dto">Fields to update</param>
         /// <param name="id">User Id</param>
         /// <returns>Updated user info</returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> EditUser([FromBody] EditUserDto dto, Guid id)
         {
@@ -134,6 +136,8 @@ namespace HelloCity.Api.Controllers
                 }
             });
         }
+
+        [Authorize]
         [HttpPost("{userId}/checklist-item")]
         public async Task<ActionResult<ChecklistItem>> CreateChecklistItem(Guid userId, CreateChecklistItemDto newChecklistItemDto)
         {
@@ -156,6 +160,8 @@ namespace HelloCity.Api.Controllers
                 return Problem("An unexpected error occurred.");
             }
         }
+
+        [Authorize]
         [HttpGet("{userId}/checklist-item")]
         public async Task<ActionResult<List<ChecklistItem>>> GetChecklistItems(Guid userId)
         {
@@ -172,6 +178,8 @@ namespace HelloCity.Api.Controllers
                 return NotFound("User not found");
             }
         }
+
+        [Authorize]
         [HttpPut("{userId}/checklist-item")]
         public async Task<IActionResult> EditCheckListItem(Guid userId, Guid itemId, EditCheckListItemDto editChecklistItemDto)
         {
@@ -195,6 +203,27 @@ namespace HelloCity.Api.Controllers
             }
         }
 
+        [Authorize]
+        [HttpDelete("{userId}/checklist-item")]
+        public async Task<IActionResult> DeleteChecklistItem(Guid userId, Guid itemId)
+        {
+            _logger.LogInformation("Deleting checklist item {itemId} for User with ID: {userId}", itemId, userId);
 
+            try
+            {
+                await _checklistItemService.DeleteChecklistItemAsync(userId, itemId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Delete failed. Not found. UserId: {userId}, ItemId: {itemId}", userId, itemId);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting checklist item. UserId: {userId}, ItemId: {itemId}", userId, itemId);
+                return Problem("An unexpected error occurred.");
+            }
+        }
     }
 }

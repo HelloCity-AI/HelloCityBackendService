@@ -112,7 +112,7 @@ public class Program
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://dev-aqrrgsknjfy2121f.au.auth0.com"; // auth0 domain
+                options.Authority = "https://hello-city.au.auth0.com"; // auth0 domain
                 options.Audience = "https://hellocity.api";
 
                 options.TokenValidationParameters = new TokenValidationParameters
